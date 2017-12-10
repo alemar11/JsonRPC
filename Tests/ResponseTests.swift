@@ -160,8 +160,8 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected an error response.")
       }
     }
-    
-    
   }
+  
+  // MARK: - Encoding
   
 }
