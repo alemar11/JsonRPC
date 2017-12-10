@@ -46,10 +46,8 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .success(id: let id, result: let result):
-        XCTAssertNotNil(response.id)
-        XCTAssertNotNil(response.result)
-        XCTAssertTrue(response.id! == Id.number(4))
-        XCTAssertTrue(response.result! as! Int == 19)
+        XCTAssertTrue(id == Id.number(4))
+        XCTAssertTrue(result as! Int == 19)
       default:
         XCTFail("Expected a success response.")
       }
@@ -63,10 +61,8 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .success(id: let id, result: let result):
-        XCTAssertNotNil(response.id)
-        XCTAssertNotNil(response.result)
-        XCTAssertTrue(response.id! == Id.string("test"))
-        XCTAssertTrue(response.result! as! Double == 19.19)
+        XCTAssertTrue(id == Id.string("test"))
+        XCTAssertTrue(result as! Double == 19.19)
       default:
         XCTFail("Expected a success response.")
       }
@@ -88,12 +84,10 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .success(id: let id, result: let result):
-        XCTAssertNotNil(response.id)
-        XCTAssertNotNil(response.result)
-        XCTAssertTrue(response.id! == Id.string("9"))
-        XCTAssertTrue((response.result! as! [Any]).count == 2)
-        XCTAssertTrue((response.result! as! [Any])[0] as! String == "hello")
-        XCTAssertTrue((response.result! as! [Any])[1] as! Int == 5)
+        XCTAssertTrue(id == Id.string("9"))
+        XCTAssertTrue((result as! [Any]).count == 2)
+        XCTAssertTrue((result as! [Any])[0] as! String == "hello")
+        XCTAssertTrue((result as! [Any])[1] as! Int == 5)
       default:
         XCTFail("Expected a success response.")
       }
@@ -107,11 +101,9 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .success(id: let id, result: let result):
-        XCTAssertNotNil(response.id)
-        XCTAssertNotNil(response.result)
-        XCTAssertTrue(response.id! == Id.number(1))
-        XCTAssertTrue((response.result! as! [String: Any]).count == 1)
-        XCTAssertTrue((response.result! as! [String: Any])["key1"] as! Int == 2)
+        XCTAssertTrue(id == Id.number(1))
+        XCTAssertTrue((result as! [String: Any]).count == 1)
+        XCTAssertTrue((result as! [String: Any])["key1"] as! Int == 2)
       default:
         XCTFail("Expected a success response.")
       }
@@ -128,13 +120,8 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .error(id: let id, error: let error):
-        XCTAssertNotNil(response.id)
-        guard let error = response.error else {
-          XCTAssertNotNil(response.error)
-          return
-        }
-
-        XCTAssertTrue(response.id! == Id.string("1"))
+        XCTAssertNotNil(id)
+        XCTAssertTrue(id == Id.string("1"))
         XCTAssertTrue(error.code == -32601)
         XCTAssertTrue(error.message == "Method not found")
         XCTAssertNil(error.data)
@@ -151,18 +138,14 @@ class ResponseTests: XCTestCase {
       let response = try JSONDecoder().decode(Response.self, from: json)
       switch response {
       case .error(id: let id, error: let error):
-        XCTAssertNotNil(response.id)
-        guard let error = response.error else {
-          XCTAssertNotNil(response.error)
-          return
-        }
-
-        XCTAssertTrue(response.id! == Id.number(12))
+        XCTAssertNotNil(id)
+        XCTAssertTrue(id == Id.number(12))
         XCTAssertTrue(error.code == -32601)
         XCTAssertTrue(error.message == "Method not found")
         XCTAssertNotNil(error.data)
         switch error {
         case .methodNotFound(message: let message, data: let errorData):
+          XCTAssertTrue(message == "Method not found")
           switch errorData! {
           case .primitive(value: let data):
             XCTAssertTrue(data as! Bool == true)
