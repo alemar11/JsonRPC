@@ -24,19 +24,20 @@
 import XCTest
 @testable import JsonRPC
 
+#if os(Linux)
 extension ResponseTests {
-
   static var allTests = [
     ("testDecodingSuccessResponse", testDecodingSuccessResponse),
     ("testDecodingErrorResponse()", testDecodingErrorResponse),
-  ]
-
+    ]
 }
+  
+#endif
 
 class ResponseTests: XCTestCase {
-
+  
   // MARK: - Decoding
-
+  
   func testDecodingSuccessResponse() throws {
     /// int result
     do {
@@ -52,7 +53,7 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected a success response.")
       }
     }
-
+    
     /// string result
     do {
       let json = """
@@ -67,7 +68,7 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected a success response.")
       }
     }
-
+    
     /// invalid jsonrpc
     do {
       let json = """
@@ -75,7 +76,7 @@ class ResponseTests: XCTestCase {
       """.data(using: .utf8)!
       XCTAssertThrowsError(try JSONDecoder().decode(Response.self, from: json))
     }
-
+    
     /// array result
     do {
       let json = """
@@ -92,7 +93,7 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected a success response.")
       }
     }
-
+    
     /// dictionary result
     do {
       let json = """
@@ -108,9 +109,9 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected a success response.")
       }
     }
-
+    
   }
-
+  
   func testDecodingErrorResponse() throws {
     /// error without data
     do {
@@ -129,7 +130,7 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected an error response.")
       }
     }
-
+    
     /// error with data
     do {
       let json = """
@@ -159,8 +160,8 @@ class ResponseTests: XCTestCase {
         XCTFail("Expected an error response.")
       }
     }
-
-
+    
+    
   }
-
+  
 }

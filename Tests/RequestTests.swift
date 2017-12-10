@@ -24,6 +24,7 @@
 import XCTest
 @testable import JsonRPC
 
+#if os(Linux)
 extension RequestTests {
   static var allTests = [
     ("testDecodingRequestWithPositionalParameters", testDecodingRequestWithPositionalParameters),
@@ -35,6 +36,7 @@ extension RequestTests {
     ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
   ]
 }
+  #endif
 
 class RequestTests: XCTestCase {
 
