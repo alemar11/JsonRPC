@@ -254,7 +254,10 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test3"))
       XCTAssertTrue(json.contains("\"id\":0"))
-      XCTAssertTrue(json.contains("\"params\":[1,2,true,{\"minuend\":42,\"subtrahend\":23}]"))
+      XCTAssertTrue(json.contains("\"params\":"))
+      XCTAssertTrue(json.contains("[1,2,true,"))
+      XCTAssertTrue(json.contains("\"minuend\":42"))
+      XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
 
     do {
@@ -270,7 +273,13 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test3"))
       XCTAssertTrue(json.contains("\"id\":\"0\""))
-      XCTAssertTrue(json.contains("\"params\":[1,true,{\"key1\":\"k1\",\"key3\":[0,3,{\"subKey2\":12,\"subKey1\":true}],\"key2\":2}]}"))
+      XCTAssertTrue(json.contains("\"params\":["))
+      XCTAssertTrue(json.contains("[1,true"))
+      XCTAssertTrue(json.contains("\"key1\":\"k1\""))
+      XCTAssertTrue(json.contains("\"key3\":[0,3,{"))
+      XCTAssertTrue(json.contains("\"subKey2\":12"))
+      XCTAssertTrue(json.contains("\"subKey1\":true"))
+      
     }
 
   }
@@ -307,7 +316,9 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"123"))
       XCTAssertFalse(json.contains("id"))
-      XCTAssertTrue(json.contains("\"params\":{\"minuend\":42,\"subtrahend\":23}"))
+      XCTAssertTrue(json.contains("\"params\":{"))
+      XCTAssertTrue(json.contains("\"minuend\":42"))
+      XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
 
     do {
@@ -323,7 +334,10 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"123"))
       XCTAssertFalse(json.contains("id"))
-      XCTAssertTrue(json.contains("\"params\":{\"other\":[1,2,3],\"minuend\":42,\"subtrahend\":23}"))
+      XCTAssertTrue(json.contains("\"params\":{"))
+      XCTAssertTrue(json.contains("\"other\":[1,2,3]"))
+      XCTAssertTrue(json.contains("\"minuend\":42"))
+      XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
   }
 
