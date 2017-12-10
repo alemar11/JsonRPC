@@ -32,6 +32,27 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		238228FA1FDDD78900C8901F /* Codable+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358511FDDA23D00E2BC57 /* Codable+Utils.swift */; };
+		238228FB1FDDD78900C8901F /* ErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358561FDDA23D00E2BC57 /* ErrorData.swift */; };
+		238228FC1FDDD78900C8901F /* ErrorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358521FDDA23D00E2BC57 /* ErrorObject.swift */; };
+		238228FD1FDDD78900C8901F /* Id.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358571FDDA23D00E2BC57 /* Id.swift */; };
+		238228FE1FDDD78900C8901F /* Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358531FDDA23D00E2BC57 /* Parameters.swift */; };
+		238228FF1FDDD78900C8901F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358541FDDA23D00E2BC57 /* Request.swift */; };
+		238229001FDDD78900C8901F /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358551FDDA23D00E2BC57 /* Response.swift */; };
+		238229011FDDD78A00C8901F /* Codable+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358511FDDA23D00E2BC57 /* Codable+Utils.swift */; };
+		238229021FDDD78A00C8901F /* ErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358561FDDA23D00E2BC57 /* ErrorData.swift */; };
+		238229031FDDD78A00C8901F /* ErrorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358521FDDA23D00E2BC57 /* ErrorObject.swift */; };
+		238229041FDDD78A00C8901F /* Id.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358571FDDA23D00E2BC57 /* Id.swift */; };
+		238229051FDDD78A00C8901F /* Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358531FDDA23D00E2BC57 /* Parameters.swift */; };
+		238229061FDDD78A00C8901F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358541FDDA23D00E2BC57 /* Request.swift */; };
+		238229071FDDD78A00C8901F /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358551FDDA23D00E2BC57 /* Response.swift */; };
+		238229081FDDD78A00C8901F /* Codable+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358511FDDA23D00E2BC57 /* Codable+Utils.swift */; };
+		238229091FDDD78A00C8901F /* ErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358561FDDA23D00E2BC57 /* ErrorData.swift */; };
+		2382290A1FDDD78A00C8901F /* ErrorObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358521FDDA23D00E2BC57 /* ErrorObject.swift */; };
+		2382290B1FDDD78A00C8901F /* Id.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358571FDDA23D00E2BC57 /* Id.swift */; };
+		2382290C1FDDD78A00C8901F /* Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358531FDDA23D00E2BC57 /* Parameters.swift */; };
+		2382290D1FDDD78A00C8901F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358541FDDA23D00E2BC57 /* Request.swift */; };
+		2382290E1FDDD78A00C8901F /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358551FDDA23D00E2BC57 /* Response.swift */; };
 		23D3583F1FDDA0DC00E2BC57 /* JsonRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D358351FDDA0DC00E2BC57 /* JsonRPC.framework */; };
 		23D358461FDDA0DC00E2BC57 /* JsonRPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D358381FDDA0DC00E2BC57 /* JsonRPC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23D358581FDDA23D00E2BC57 /* Codable+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358511FDDA23D00E2BC57 /* Codable+Utils.swift */; };
@@ -572,6 +593,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				238228FE1FDDD78900C8901F /* Parameters.swift in Sources */,
+				238228FF1FDDD78900C8901F /* Request.swift in Sources */,
+				238228FD1FDDD78900C8901F /* Id.swift in Sources */,
+				238228FB1FDDD78900C8901F /* ErrorData.swift in Sources */,
+				238228FA1FDDD78900C8901F /* Codable+Utils.swift in Sources */,
+				238228FC1FDDD78900C8901F /* ErrorObject.swift in Sources */,
+				238229001FDDD78900C8901F /* Response.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,6 +617,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				238229051FDDD78A00C8901F /* Parameters.swift in Sources */,
+				238229061FDDD78A00C8901F /* Request.swift in Sources */,
+				238229041FDDD78A00C8901F /* Id.swift in Sources */,
+				238229021FDDD78A00C8901F /* ErrorData.swift in Sources */,
+				238229011FDDD78A00C8901F /* Codable+Utils.swift in Sources */,
+				238229031FDDD78A00C8901F /* ErrorObject.swift in Sources */,
+				238229071FDDD78A00C8901F /* Response.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +641,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2382290C1FDDD78A00C8901F /* Parameters.swift in Sources */,
+				2382290D1FDDD78A00C8901F /* Request.swift in Sources */,
+				2382290B1FDDD78A00C8901F /* Id.swift in Sources */,
+				238229091FDDD78A00C8901F /* ErrorData.swift in Sources */,
+				238229081FDDD78A00C8901F /* Codable+Utils.swift in Sources */,
+				2382290A1FDDD78A00C8901F /* ErrorObject.swift in Sources */,
+				2382290E1FDDD78A00C8901F /* Response.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -871,6 +913,7 @@
 		23D358791FDDA2BA00E2BC57 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -889,6 +932,7 @@
 		23D3587A1FDDA2BA00E2BC57 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -952,6 +996,7 @@
 		23D358951FDDA2D300E2BC57 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Support/Info-Tests.plist";
@@ -969,6 +1014,7 @@
 		23D358961FDDA2D300E2BC57 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Support/Info-Tests.plist";
