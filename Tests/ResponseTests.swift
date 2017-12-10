@@ -25,12 +25,13 @@ import XCTest
 @testable import JsonRPC
 
 #if os(Linux)
-extension ResponseTests {
-  static var allTests = [
-    ("testDecodingSuccessResponse", testDecodingSuccessResponse),
-    ("testDecodingErrorResponse()", testDecodingErrorResponse),
-    ]
-}
+  extension ResponseTests {
+    static var allTests = [
+      ("testDecodingSuccessResponse", testDecodingSuccessResponse),
+      ("testDecodingErrorResponse", testDecodingErrorResponse),
+      ("testEncodingSuccessResponse", testEncodingSuccessResponse),
+      ]
+  }
   
 #endif
 
@@ -163,5 +164,92 @@ class ResponseTests: XCTestCase {
   }
   
   // MARK: - Encoding
+  
+  func testEncodingSuccessResponse() throws {
+    
+    /// string result
+    do {
+      let response = Response.success(id: Id.number(10), result: "Success")
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":10"))
+      XCTAssertTrue(json.contains("\"result\":\"Success\""))
+    }
+    
+    /// [int] result
+    do {
+      let response = Response.success(id: Id.number(0), result: [1,2,3])
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":0"))
+      XCTAssertTrue(json.contains("\"result\":[1,2,3"))
+    }
+    
+    /// [Any] result
+    do {
+      let response = Response.success(id: Id.string("10"), result: [1,false,3, "four"])
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":\"10\""))
+      XCTAssertTrue(json.contains("\"result\":[1,false,3,\"four\""))
+    }
+    
+    /// [String: Any] result
+    do {
+      let response = Response.success(id: Id.string("0"), result: ["key1": true, "key2": 11.83])
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":\"0\""))
+      XCTAssertTrue(json.contains("\"key1\":true"))
+      XCTAssertTrue(json.contains("\"key2\":11.83"))
+    }
+    
+    /// nested [String: Any] result
+    do {
+      let response = Response.success(id: Id.string("0"), result: ["key1": true, "key2": ["subkey1":[false, 0]]])
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":\"0\""))
+      XCTAssertTrue(json.contains("\"key1\":true"))
+      XCTAssertTrue(json.contains("\"key2\":{"))
+      XCTAssertTrue(json.contains("\"subkey1\":[false,0]"))
+    }
+    
+  }
   
 }

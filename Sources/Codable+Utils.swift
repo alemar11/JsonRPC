@@ -115,8 +115,31 @@ extension KeyedDecodingContainer {
   }
 }
 
+extension KeyedEncodingContainer {
+  mutating func encodeAny(_ value: Any, forKey key: Key) throws {
+    switch value {
+    case let element as Bool:
+      try encode(element, forKey: key)
+    case let value as String:
+      try encode(value, forKey: key)
+    case let value as Int:
+      try encode(value, forKey: key)
+    case let value as Double:
+      try encode(value, forKey: key)
+    case let value as Dictionary<String, Any>:
+      var nestedKeyedContainer = self.nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
+      try nestedKeyedContainer.encodeDynamicDictionary(value)
+    case let value as Array<Any>:
+      var nestedContainer = self.nestedUnkeyedContainer(forKey: key)
+      try nestedContainer.encode(value)
+    default:
+      let context = EncodingError.Context(codingPath: codingPath, debugDescription: "The encoding operation for \(value) is not yet supported.")
+      throw EncodingError.invalidValue(value, context)
+    }
+  }
+}
 
-extension KeyedEncodingContainer where Key == DynamicCodingKey {
+extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the where clause should be defined?
 
   mutating func encodeDynamicDictionary(_ dictionary: Dictionary<String, Any>) throws {
 
@@ -144,7 +167,7 @@ extension KeyedEncodingContainer where Key == DynamicCodingKey {
       }
     }
   }
-
+  
 }
 
 extension UnkeyedEncodingContainer {

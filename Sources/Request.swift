@@ -73,7 +73,7 @@ extension Request: Codable {
 
   public func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(jsonrpc, forKey: .jsonrpc)
+    try container.encode(jsonrpc, forKey: .jsonrpc) //TOOD: this should be always 2.0
     try container.encode(method, forKey: .method)
     if let params = params {
       try container.encode(params, forKey: .params)

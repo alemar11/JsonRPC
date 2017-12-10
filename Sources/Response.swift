@@ -92,8 +92,15 @@ extension Response: Codable {
   }
 
   public func encode(to encoder: Encoder) throws {
-//    var container = encoder.container(keyedBy: CodingKeys.self)
-//    try container.encode(jsonrpc, forKey: .jsonrpc)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode("2.0", forKey: .jsonrpc)
+    switch self {
+    case .success(id: let id, result: let result):
+      try container.encode(id, forKey: .id)
+      try container.encodeAny(result, forKey: .result)
+    case .error(id: let id, error: let error):
+      throw TestError.invalid
+    }
 //    try container.encode(method, forKey: .method)
 //    if let params = params {
 //      try container.encode(params, forKey: .params)
