@@ -94,15 +94,16 @@ public enum ErrorObject: Error {
   }
 
   /// Creates a new raw error.
-  public init?(value: Int, message: String, data: ErrorData? = nil) {
-    if ErrorObject.isValidCode(value) {
-      self = .raw(code: value, message: message, data: data)
+  public init?(code: Int, message: String, data: ErrorData? = nil) {
+    if type(of: self).isValidCode(code) {
+      self = .raw(code: code, message: message, data: data)
+      return
     }
     return nil
   }
 
-  private static func isValidCode(_ value: Int) -> Bool {
-    return -32099 ... -32000 ~= value
+  private static func isValidCode(_ code: Int) -> Bool {
+    return -32099 ... -32000 ~= code
   }
 
 }
@@ -114,8 +115,6 @@ extension ErrorObject: Codable {
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
-//    let code = try values.decode(Int.self, forKey: .code)
-//    let message = try values.decodeIfPresent(String.self, forKey: .message)
 
     let components = try values.decodeDynamic(Dictionary<String,Any>.self, forKey: .error)
     guard let codeValue = components["code"], let code = codeValue as? Int else {

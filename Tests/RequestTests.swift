@@ -36,7 +36,7 @@ extension RequestTests {
     ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
   ]
 }
-  #endif
+#endif
 
 class RequestTests: XCTestCase {
 

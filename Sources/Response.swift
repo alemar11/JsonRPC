@@ -25,16 +25,16 @@
 public enum Response {
   case success(id: Id, result: Any)
   case error(id: Id?, error: ErrorObject)
-
+  
   private var jsonrpcVersion : String {
     return "2.0"
   }
-
+  
   /// A String specifying the version of the JSON-RPC protocol. MUST be exactly "2.0".
   public var jsonrpc: String {
     return jsonrpcVersion
   }
-
+  
   /// It MUST be the same as the value of the id member in the Request Object.
   /// - Note: If there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it MUST be Null.
   public var id: Id? {
@@ -43,7 +43,7 @@ public enum Response {
     case .error(let id, _): return id
     }
   }
-
+  
   /// This member is REQUIRED on success.
   /// This member MUST NOT exist if there was an error invoking the method.
   /// - Note: The value of this member is determined by the method invoked on the Server.
@@ -53,7 +53,7 @@ public enum Response {
     case .error(_, _): return nil
     }
   }
-
+  
   /// This member is REQUIRED on error.
   public var error: ErrorObject? {
     switch self {
@@ -68,15 +68,15 @@ public enum Response {
 extension Response: Codable {
   enum CodingError: Error { case decoding(String) }
   enum CodingKeys: String, CodingKey { case jsonrpc, id, result, error }
-
+  
   public init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
-
-    guard let jsonrpc = try? values.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else { throw TestError.invalid }
-      let id = try Id(from: decoder)
-      let error = try? ErrorObject(from: decoder)
-      let result = try? values.decodeDynamicType(forKey: .result)
-
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    
+    guard let jsonrpc = try? container.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else { throw TestError.invalid }
+    let id = try Id(from: decoder)
+    let error = try? ErrorObject(from: decoder)
+    let result = try? container.decodeDynamicType(forKey: .result)
+    
     if let error = error {
       self = .error(id: id, error: error)
     } else if let result = result {
@@ -88,9 +88,9 @@ extension Response: Codable {
     } else {
       throw TestError.invalid
     }
-
+    
   }
-
+  
   public func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode("2.0", forKey: .jsonrpc)
@@ -99,17 +99,13 @@ extension Response: Codable {
       try container.encode(id, forKey: .id)
       try container.encodeAny(result, forKey: .result)
     case .error(id: let id, error: let error):
-      throw TestError.invalid
+      if let id = id {
+        // the use of null for id in Requests is discouraged
+        try container.encode(id, forKey: .id)
+      }
+      try container.encode(error, forKey: .error)
     }
-//    try container.encode(method, forKey: .method)
-//    if let params = params {
-//      try container.encode(params, forKey: .params)
-//    }
-//    if let id = id {
-//      // the use of null for id in Requests is discouraged
-//      try container.encode(id, forKey: .id)
-//    }
   }
-
+  
 }
 
