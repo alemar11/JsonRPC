@@ -164,7 +164,7 @@ extension UnkeyedDecodingContainer {
   }
 
   mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
-    let nestedContainer = try nestedContainer(keyedBy: DynamicCodingKey.self)
+    let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
 
     return try nestedContainer.decodeDynamicDictionary(type)
   }
