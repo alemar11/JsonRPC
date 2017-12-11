@@ -91,24 +91,6 @@ public enum ErrorObject: Error {
 
 extension ErrorObject {
   
-  /// Returns a default error message for a given error `code`.
-  public static func defaultMessage(for code: Int) -> String{
-    switch code {
-    case -32700:
-      return "Parse Error"
-    case -32600:
-      return "Invalid Request"
-    case -32601:
-      return "Method Not Found"
-    case -32602:
-      return "Invalid Params"
-    case -32603:
-      return "Internal Error"
-    default:
-      return "Server Error"
-    }
-  }
-  
   /// Returns `true` if the code is defined in the range for the implementation-defined server-errors.
   public static func isValidImplementationDefinedCode(_ code: Int) -> Bool {
     return -32099 ... -32000 ~= code
@@ -130,7 +112,7 @@ extension ErrorObject: Codable {
       throw DecodingError.dataCorrupted(context)
     }
     
-    let message = components[CodingKeys.message.rawValue] as? String ?? ErrorObject.defaultMessage(for: code)
+    let message = components[CodingKeys.message.rawValue] as? String ?? ""
     let errorData = try? ErrorData(from: decoder)
     
     switch code {
