@@ -138,6 +138,7 @@ extension ErrorObject: Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     
     switch self {
+      
     case .raw(code: let code, message: let message, data: let data):
       guard ErrorObject.isValidImplementationDefinedCode(code) else {
         let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "\(code) is not defined inside the range between -32099 and -32000.")
@@ -148,6 +149,7 @@ extension ErrorObject: Codable {
       if let data = data {
         try container.encode(data, forKey: .data)
       }
+      
     default:
       try container.encode(code, forKey: .code)
       try container.encode(message, forKey: .message)

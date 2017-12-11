@@ -252,10 +252,56 @@ class ResponseTests: XCTestCase {
       }
     }
     
+    /// defined with structured error data
+    do {
+      let json = """
+           {"jsonrpc": "2.0", "error": {"code": -32010, "message": "Server Error", "data": {"value": 23, "nilValue": null} }, "id": 110}
+          """.data(using: .utf8)!
+      let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.number(110))
+      XCTAssertTrue(response.error?.code == -32010)
+      XCTAssertTrue(response.error?.message == "Server Error")
+      XCTAssertNotNil(response.error?.data)
+      XCTAssertNil(response.result)
+      
+      switch response {
+      case .error(id: let id, error: let error):
+        XCTAssertNotNil(id)
+        XCTAssertTrue(id == Id.number(110))
+        XCTAssertTrue(error.code == -32010)
+        XCTAssertTrue(error.message == "Server Error")
+        XCTAssertNotNil(error.data)
+        switch error {
+        case .raw(code: let code, message: let message, data: let data):
+           XCTAssertTrue(code == -32010)
+          XCTAssertTrue(message == "Server Error")
+          switch data! {
+          case .structured(object: let dictionary):
+            XCTAssertTrue(dictionary["value"] as! Int == 23)
+            XCTAssertNil(dictionary["nilValue"])
+          default:
+            XCTFail("Wrong error data type.")
+          }
+        default:
+          XCTFail("Wrong error type.")
+        }
+      default:
+        XCTFail("Expected an error response.")
+      }
+    }
+    
     /// invalid error id
     do {
       let json = """
           {"jsonrpc": "2.0", "error": {"code": -1, "message": "Custom"}, "id": "1"}
+      """.data(using: .utf8)!
+      XCTAssertThrowsError(try JSONDecoder().decode(Response.self, from: json))
+    }
+    
+    /// invalid error id
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "error": {"code": "fakeId", "message": "Custom"}, "id": "1"}
       """.data(using: .utf8)!
       XCTAssertThrowsError(try JSONDecoder().decode(Response.self, from: json))
     }
@@ -352,7 +398,7 @@ class ResponseTests: XCTestCase {
   }
   
   func testEncodingErrorResponse() throws {
-    /// without error data
+    /// raw without error data
     do {
       let error = ErrorObject(code: -32000, message: "Something went wrong.")!
       let response = Response.error(id: Id.string("errorID"), error: error)
@@ -369,6 +415,28 @@ class ResponseTests: XCTestCase {
       XCTAssertTrue(json.contains("\"error\":{"))
       XCTAssertTrue(json.contains("\"message\":\"Something went wrong.\""))
       XCTAssertTrue(json.contains("\"code\":-32000"))
+    }
+    
+    /// raw with error data
+    do {
+      let errorData = ErrorData.structured(object: ["key1": [1,2,nil]])
+      let error = ErrorObject(code: -32000, message: "Something went wrong.", data: errorData)!
+      let response = Response.error(id: Id.string("errorID"), error: error)
+      let encoder = JSONEncoder()
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+  
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":\"errorID\""))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"message\":\"Something went wrong.\""))
+      XCTAssertTrue(json.contains("\"code\":-32000"))
+      XCTAssertTrue(json.contains("\"data\""))
+      XCTAssertTrue(json.contains("\"key1\":[1,2,null]"))
     }
     
     /// empty message and no error data
@@ -545,6 +613,13 @@ class ResponseTests: XCTestCase {
       XCTAssertTrue(json.contains("\"id\":1"))
       XCTAssertTrue(json.contains("\"error\":{"))
       XCTAssertTrue(json.contains("\"code\":-32603"))
+    }
+    
+    do {
+      let error = ErrorObject.raw(code: -1, message: "raw error", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      XCTAssertThrowsError(try encoder.encode(response))
     }
   }
   
