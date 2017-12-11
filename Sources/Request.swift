@@ -24,9 +24,6 @@
 /// A JSON-RPC request.
 public struct Request {
 
-  /// A String specifying the version of the JSON-RPC protocol. MUST be exactly "2.0".
-  public var jsonrpc: String
-
   /// A String containing the name of the method to be invoked. Method names that begin with the word rpc followed by a period character (U+002E or ASCII 46) are reserved for rpc-internal methods and extensions and MUST NOT be used for anything else.
   public var method: String
 
@@ -67,13 +64,13 @@ extension Request: Codable {
     let params = try? Parameters(from: decoder)
     let id = try? Id(from: decoder)
 
-    self = Request(jsonrpc: jsonrpc, method: method, id: id, params: params)
+    self = Request(method: method, id: id, params: params)
 
   }
 
   public func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(jsonrpc, forKey: .jsonrpc) //TOOD: this should be always 2.0
+    try container.encode("2.0", forKey: .jsonrpc)
     try container.encode(method, forKey: .method)
     if let params = params {
       try container.encode(params, forKey: .params)

@@ -75,7 +75,6 @@ class RequestTests: XCTestCase {
     
     let request = try JSONDecoder().decode(Request.self, from: json)
     
-    XCTAssertTrue(request.jsonrpc == "2.0")
     XCTAssertTrue(request.id == Id.number(1))
     XCTAssertTrue(request.method == "subtract")
     
@@ -103,7 +102,6 @@ class RequestTests: XCTestCase {
       
       let request = try JSONDecoder().decode(Request.self, from: json)
       
-      XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.id == Id.number(3))
       XCTAssertTrue(request.method == "subtract")
       
@@ -128,7 +126,6 @@ class RequestTests: XCTestCase {
       
       let request = try JSONDecoder().decode(Request.self, from: json)
       
-      XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.id == Id.number(3))
       XCTAssertTrue(request.method == "subtract")
       
@@ -156,7 +153,6 @@ class RequestTests: XCTestCase {
     
     let request = try JSONDecoder().decode(Request.self, from: json)
     
-    XCTAssertTrue(request.jsonrpc == "2.0")
     XCTAssertTrue(request.method == "update")
     XCTAssertNil(request.id)
     XCTAssertTrue(request.isNotification)
@@ -188,7 +184,6 @@ class RequestTests: XCTestCase {
       
       let request = try JSONDecoder().decode(Request.self, from: json)
       
-      XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.isNotification)
       XCTAssertTrue(request.method == "subtract")
       
@@ -213,7 +208,6 @@ class RequestTests: XCTestCase {
       
       let request = try JSONDecoder().decode(Request.self, from: json)
       
-      XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.isNotification)
       XCTAssertTrue(request.method == "subtract")
       
@@ -238,7 +232,7 @@ class RequestTests: XCTestCase {
   
   func testEncodingRequestWithPositionalParameters() throws {
     do {
-      let request = Request(jsonrpc: "2.0", method: "test", id: Id.number(11), params: Parameters.positional(array: [1, 2, true, "hello"]))
+      let request = Request(method: "test", id: Id.number(11), params: Parameters.positional(array: [1, 2, true, "hello"]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -254,7 +248,7 @@ class RequestTests: XCTestCase {
     }
     
     do {
-      let request = Request(jsonrpc: "2.0", method: "test2", id: Id.string("customId"), params: Parameters.positional(array: [1, 2, true, ["hello", 3]]))
+      let request = Request(method: "test2", id: Id.string("customId"), params: Parameters.positional(array: [1, 2, true, ["hello", 3]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -270,7 +264,7 @@ class RequestTests: XCTestCase {
     }
     
     do {
-      let request = Request(jsonrpc: "2.0", method: "test3", id: Id.number(0), params: Parameters.positional(array: [1, 2, true, ["subtrahend": 23, "minuend": 42]]))
+      let request = Request(method: "test3", id: Id.number(0), params: Parameters.positional(array: [1, 2, true, ["subtrahend": 23, "minuend": 42]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -289,7 +283,7 @@ class RequestTests: XCTestCase {
     }
     
     do {
-      let request = Request(jsonrpc: "2.0", method: "test3", id: Id.string("0"), params: Parameters.positional(array: [1, true, ["key1": "k1", "key2": 2, "key3": [0,3,["subKey1": true, "subKey2": 12]]]]))
+      let request = Request(method: "test3", id: Id.string("0"), params: Parameters.positional(array: [1, true, ["key1": "k1", "key2": 2, "key3": [0,3,["subKey1": true, "subKey2": 12]]]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -314,7 +308,7 @@ class RequestTests: XCTestCase {
   
   func testEncodingNotificationWithoutParameters() throws {
     do {
-      let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: nil)
+      let request = Request(method: "123", id: nil,  params: nil)
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -332,7 +326,7 @@ class RequestTests: XCTestCase {
   
   func testEncodingNotificationWithNamedParameters() throws {
     do {
-      let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42]))
+      let request = Request(method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       
@@ -350,7 +344,7 @@ class RequestTests: XCTestCase {
     }
     
     do {
-      let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42, "other":[1,2,3]]))
+      let request = Request(method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42, "other":[1,2,3]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
       

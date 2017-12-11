@@ -21,17 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// When a rpc call is made, the Server MUST reply with a Response, except for in the case of Notifications.
+/// When a rpc call is made, the Server must reply with a Response, except for in the case of Notifications.
 public enum Response {
   /// Success response.
   case success(id: Id, result: Any)
   /// Error response: when a rpc call encounters an error, the `ErrorObject` must contain the error member with a value.
   case error(id: Id?, error: ErrorObject)
-  
-  /// A String specifying the version of the JSON-RPC protocol. Must be exactly "2.0".
-  public var jsonrpc: String {
-    return "2.0"
-  }
   
   /// It must be the same as the value of the id member in the Request Object.
   /// - Note: If there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it must be Null.
@@ -42,8 +37,8 @@ public enum Response {
     }
   }
   
-  /// This member is REQUIRED on success.
-  /// This member MUST NOT exist if there was an error invoking the method.
+  /// This member is **required on success**.
+  /// This member must not exist if there was an error invoking the method.
   /// - Note: The value of this member is determined by the method invoked on the Server.
   public var result: Any? {
     switch self {
@@ -52,7 +47,7 @@ public enum Response {
     }
   }
   
-  /// This member is REQUIRED on error.
+  /// This member is **required on error**.
   public var error: ErrorObject? {
     switch self {
     case .success(_, _): return nil
