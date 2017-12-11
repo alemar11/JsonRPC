@@ -52,7 +52,6 @@ enum TestError: Error {
 // MARK: - Codable
 
 extension Request: Codable {
-  enum CodingError: Error { case decoding(String) }
   enum CodingKeys: String, CodingKey { case jsonrpc, id, method, params }
 
   public init(from decoder: Decoder) throws {

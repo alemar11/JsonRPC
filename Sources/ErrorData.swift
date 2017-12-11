@@ -27,7 +27,6 @@ public enum ErrorData {
 }
 
 extension ErrorData: Codable {
-  enum CodingError: Error { case decoding(String) } //TODO: is it needed?
   enum CodingKeys: String, CodingKey { case error, data }
 
   public init(from decoder: Decoder) throws {

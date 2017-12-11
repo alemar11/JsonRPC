@@ -23,12 +23,6 @@
 
 import Foundation
 
-// https://stackoverflow.com/questions/44603248/how-to-decode-a-property-with-type-of-json-dictionary-in-swift-4-decodable-proto/46049763#46049763
-// https://gist.github.com/bocato/0afb0aaf96f045f6cde5401359efc3bd
-// https://gist.github.com/alemar11/5704a234e52c3a5078b6d7f4a5f6eac9
-
-//TODO: ----> encode nil
-
 struct DynamicCodingKey: CodingKey {
   var stringValue: String
 
@@ -43,6 +37,8 @@ struct DynamicCodingKey: CodingKey {
     self.intValue = intValue
   }
 }
+
+// MARK: - Decoding
 
 extension KeyedDecodingContainer {
 
@@ -88,7 +84,8 @@ extension KeyedDecodingContainer {
       } else if let nestedArray = try? decode(Array<Any>.self, forKey: key) {
         dictionary[key.stringValue] = nestedArray
       } else if try decodeNil(forKey: key) {
-        //dictionary[key.stringValue] = nil //TODO: test this, add Float
+        //TODO: test this, add Float
+        //dictionary[key.stringValue] = nil
       }
     }
 
@@ -115,7 +112,67 @@ extension KeyedDecodingContainer {
   }
 }
 
+extension UnkeyedDecodingContainer {
+
+//  mutating func decode(_ type: Array<Any?>.Type) throws -> Array<Any?> {
+//    var array: [Any?] = []
+//
+//    while isAtEnd == false {
+//      if (try? decodeNil()) != nil {
+//        array.append(nil) //to keep the position integrity
+//      } else if let value = try? decode(Bool.self) {
+//        array.append(value)
+//      } else if let value = try? decode(String.self) {
+//        array.append(value)
+//      } else if let value = try? decode(Int.self) {
+//        array.append(value)
+//      } else if let value = try? decode(Double.self) {
+//        array.append(value)
+//      } else if (try? decodeNil()) != nil {
+//        array.append("null") //to keep the position integrity, TODO null
+//      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
+//        array.append(nestedDictionary)
+//      } else if let nestedArray = try? decode(Array<Any>.self) {
+//        array.append(nestedArray)
+//      }
+//    }
+//    return array
+//  }
+  
+  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
+    var array: [Any] = []
+
+    while isAtEnd == false {
+      if let value = try? decode(Bool.self) {
+        array.append(value)
+      } else if let value = try? decode(String.self) {
+        array.append(value)
+      } else if let value = try? decode(Int.self) {
+        array.append(value)
+      } else if let value = try? decode(Double.self) {
+        array.append(value)
+      } else if (try? decodeNil()) != nil {
+        array.append("Null") //to keep the position integrity
+      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
+        array.append(nestedDictionary)
+      } else if let nestedArray = try? decode(Array<Any>.self) {
+        array.append(nestedArray)
+      }
+    }
+    return array
+  }
+
+  mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
+    let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
+
+    return try nestedContainer.decodeDynamicDictionary(type)
+  }
+}
+
+// MARK: - Encoding
+
 extension KeyedEncodingContainer {
+  
   mutating func encodeAny(_ value: Any, forKey key: Key) throws {
     switch value {
     case let element as Bool:
@@ -137,6 +194,7 @@ extension KeyedEncodingContainer {
       throw EncodingError.invalidValue(value, context)
     }
   }
+  
 }
 
 extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the where clause should be defined?
@@ -198,6 +256,7 @@ extension UnkeyedEncodingContainer {
 }
 
 extension SingleValueEncodingContainer {
+  
   mutating func encodeAny(_ value: Any) throws {
     switch value {
     case let value as Bool:
@@ -209,40 +268,9 @@ extension SingleValueEncodingContainer {
     case let value as Double:
       try encode(value)
     default:
-      let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Undefined type.")
+      let context = EncodingError.Context(codingPath: codingPath, debugDescription: "The encoding operation for \(value) is not yet supported.")
       throw EncodingError.invalidValue(value, context)
     }
   }
-}
-
-extension UnkeyedDecodingContainer {
-
-  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
-    var array: [Any] = []
-
-    while isAtEnd == false {
-      if let value = try? decode(Bool.self) {
-        array.append(value)
-      } else if let value = try? decode(String.self) {
-        array.append(value)
-      } else if let value = try? decode(Int.self) {
-        array.append(value)
-      } else if let value = try? decode(Double.self) {
-        array.append(value)
-      } else if (try? decodeNil()) != nil {
-        array.append("null") //to keep the position integrity
-      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
-        array.append(nestedDictionary)
-      } else if let nestedArray = try? decode(Array<Any>.self) {
-        array.append(nestedArray)
-      }
-    }
-    return array
-  }
-
-  mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
-    let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
-
-    return try nestedContainer.decodeDynamicDictionary(type)
-  }
+  
 }

@@ -31,7 +31,6 @@ public enum Id {
 // https://github.com/RLovelett/langserver-swift/blob/79ddd88a8ac7a2b3ff86c0e25ab8154da963ba0f/Sources/BaseProtocol/Types/Request.swift
 
 extension Id: Codable {
-  enum CodingError: Error { case decoding(String) }
   enum CodingKeys: String, CodingKey { case id }
 
   public init(from decoder: Decoder) throws {
