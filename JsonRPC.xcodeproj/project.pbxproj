@@ -56,6 +56,9 @@
 		239248191FDE9A3000D50A3D /* IdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239248181FDE9A3000D50A3D /* IdTests.swift */; };
 		2392481A1FDE9A3000D50A3D /* IdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239248181FDE9A3000D50A3D /* IdTests.swift */; };
 		2392481B1FDE9A3000D50A3D /* IdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239248181FDE9A3000D50A3D /* IdTests.swift */; };
+		2392481D1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2392481C1FDEB7A900D50A3D /* ErrorOjectTests.swift */; };
+		2392481E1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2392481C1FDEB7A900D50A3D /* ErrorOjectTests.swift */; };
+		2392481F1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2392481C1FDEB7A900D50A3D /* ErrorOjectTests.swift */; };
 		23D3583F1FDDA0DC00E2BC57 /* JsonRPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23D358351FDDA0DC00E2BC57 /* JsonRPC.framework */; };
 		23D358461FDDA0DC00E2BC57 /* JsonRPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D358381FDDA0DC00E2BC57 /* JsonRPC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		23D358581FDDA23D00E2BC57 /* Codable+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D358511FDDA23D00E2BC57 /* Codable+Utils.swift */; };
@@ -104,6 +107,7 @@
 
 /* Begin PBXFileReference section */
 		239248181FDE9A3000D50A3D /* IdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdTests.swift; sourceTree = "<group>"; };
+		2392481C1FDEB7A900D50A3D /* ErrorOjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorOjectTests.swift; sourceTree = "<group>"; };
 		23D358351FDDA0DC00E2BC57 /* JsonRPC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JsonRPC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23D358381FDDA0DC00E2BC57 /* JsonRPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JsonRPC.h; sourceTree = "<group>"; };
 		23D358391FDDA0DC00E2BC57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 				23D358A81FDDA67F00E2BC57 /* RequestTests.swift */,
 				23D358A91FDDA67F00E2BC57 /* ResponseTests.swift */,
 				239248181FDE9A3000D50A3D /* IdTests.swift */,
+				2392481C1FDEB7A900D50A3D /* ErrorOjectTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -585,6 +590,7 @@
 			files = (
 				239248191FDE9A3000D50A3D /* IdTests.swift in Sources */,
 				23D358B01FDDA67F00E2BC57 /* ResponseTests.swift in Sources */,
+				2392481D1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */,
 				23D358AD1FDDA67F00E2BC57 /* RequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -609,6 +615,7 @@
 			files = (
 				2392481A1FDE9A3000D50A3D /* IdTests.swift in Sources */,
 				23D358B11FDDA67F00E2BC57 /* ResponseTests.swift in Sources */,
+				2392481E1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */,
 				23D358AE1FDDA67F00E2BC57 /* RequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -633,6 +640,7 @@
 			files = (
 				2392481B1FDE9A3000D50A3D /* IdTests.swift in Sources */,
 				23D358B21FDDA67F00E2BC57 /* ResponseTests.swift in Sources */,
+				2392481F1FDEB7A900D50A3D /* ErrorOjectTests.swift in Sources */,
 				23D358AF1FDDA67F00E2BC57 /* RequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,6 +30,7 @@ import XCTest
       ("testDecodingInvalidResponse", testDecodingInvalidResponse),
       ("testDecodingSuccessResponse", testDecodingSuccessResponse),
       ("testDecodingErrorResponse", testDecodingErrorResponse),
+      ("testDecodingErrorResponseWithPredefinedCase", testDecodingErrorResponseWithPredefinedCase),
       ("testEncodingSuccessResponse", testEncodingSuccessResponse),
       ("testEncodingErrorResponse", testEncodingErrorResponse),
       ("testEncodingErrorResponseWithPredefinedCase", testEncodingErrorResponseWithPredefinedCase)
@@ -260,7 +261,7 @@ class ResponseTests: XCTestCase {
     }
     
   }
-  
+    
   // MARK: - Encoding
   
   func testEncodingSuccessResponse() throws {
