@@ -1,4 +1,4 @@
-// 
+//
 // JsonRPC
 //
 // Copyright © 2016-2017 Tinrobots.
@@ -31,12 +31,12 @@ extension IdTests {
 }
 
 class IdTests: XCTestCase {
-  
+
   func testEquatable() {
     XCTAssertTrue(Id.number(0) == Id.number(0))
     XCTAssertTrue(Id.number(0) != Id.number(10))
     XCTAssertTrue(Id.string("0") == Id.string("0"))
     XCTAssertTrue(Id.string("0") != Id.string("10"))
   }
-  
+
 }

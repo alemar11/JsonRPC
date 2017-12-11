@@ -1,4 +1,4 @@
-// 
+//
 // JsonRPC
 //
 // Copyright © 2016-2017 Tinrobots.
@@ -32,7 +32,7 @@ extension ErrorOjectTests {
 }
 
 class ErrorOjectTests: XCTestCase {
-  
+
   func testPredefinedCase() throws {
     do {
       let error = ErrorObject.parseError(message: "message 1", data: nil)
@@ -71,13 +71,13 @@ class ErrorOjectTests: XCTestCase {
       XCTAssertNil(error.data)
     }
   }
-  
+
   func testInitializationRawError() {
-    
+
     do {
       let error = ErrorObject(code: -32010)
       XCTAssertTrue(error?.message == "Server Error")
     }
-    
+
   }
 }

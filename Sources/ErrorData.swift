@@ -45,7 +45,6 @@ extension ErrorData: Codable {
 
   }
 
-
   public func encode(to encoder: Encoder) throws {
 
     switch self {
@@ -59,4 +58,3 @@ extension ErrorData: Codable {
     }
   }
 }
-

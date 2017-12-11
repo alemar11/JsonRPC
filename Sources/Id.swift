@@ -56,10 +56,10 @@ extension Id: Codable {
 
 }
 
-extension Id : Equatable {
+extension Id: Equatable {
 
   /// Returns a Boolean value indicating whether two Id are equal.
-  public static func ==(lhs: Id, rhs: Id) -> Bool {
+  public static func == (lhs: Id, rhs: Id) -> Bool {
     switch (lhs, rhs) {
     case (.string(let lhss), .string(let rhss)) where lhss == rhss:
       return true
@@ -71,4 +71,3 @@ extension Id : Equatable {
   }
 
 }
-

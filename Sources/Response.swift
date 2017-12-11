@@ -27,7 +27,7 @@ public enum Response {
   case success(id: Id, result: Any)
   /// Error response: when a rpc call encounters an error, the `ErrorObject` must contain the error member with a value.
   case error(id: Id?, error: ErrorObject)
-  
+
   /// It must be the same as the value of the id member in the Request Object.
   /// - Note: If there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it must be Null.
   public var id: Id? {
@@ -36,21 +36,21 @@ public enum Response {
     case .error(let id, _): return id
     }
   }
-  
+
   /// This member is **required on success**.
   /// This member must not exist if there was an error invoking the method.
   /// - Note: The value of this member is determined by the method invoked on the Server.
   public var result: Any? {
     switch self {
     case .success(_, let result): return result
-    case .error(_, _): return nil
+    case .error: return nil
     }
   }
-  
+
   /// This member is **required on error**.
   public var error: ErrorObject? {
     switch self {
-    case .success(_, _): return nil
+    case .success: return nil
     case .error(_, let error): return error
     }
   }
@@ -60,10 +60,10 @@ public enum Response {
 
 extension Response: Codable {
   enum CodingKeys: String, CodingKey { case jsonrpc, id, result, error }
-  
+
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    
+
     guard let jsonrpc = try? container.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else {
       let context = DecodingError.Context(codingPath: [CodingKeys.jsonrpc], debugDescription: "JSON RPC version not supported.")
       throw DecodingError.dataCorrupted(context)
@@ -84,9 +84,9 @@ extension Response: Codable {
       let context = DecodingError.Context(codingPath: [CodingKeys.error, CodingKeys.result], debugDescription: "The keys 'error' and 'result' cannot be nil at the same time.")
       throw DecodingError.dataCorrupted(context)
     }
-      
+
   }
-  
+
   public func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode("2.0", forKey: .jsonrpc)
@@ -102,6 +102,6 @@ extension Response: Codable {
       try container.encode(error, forKey: .error)
     }
   }
-  
+
 }
 
