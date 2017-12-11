@@ -133,7 +133,7 @@ extension ErrorObject: Codable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
 
-    let components = try values.decodeDynamicDictionary(Dictionary<String,Any>.self, forKey: .error)
+    let components = try values.decodeDictionary(Dictionary<String,Any>.self, forKey: .error)
     guard let codeValue = components[CodingKeys.code.rawValue], let code = codeValue as? Int else {
       let context =  DecodingError.Context(codingPath: [CodingKeys.code], debugDescription: "Key 'code' must be an Int.")
       throw DecodingError.dataCorrupted(context)

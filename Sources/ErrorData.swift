@@ -32,7 +32,7 @@ extension ErrorData: Codable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self).nestedContainer(keyedBy: CodingKeys.self, forKey: .error)
 
-    if let value = try? container.decodeDynamicDictionary([String: Any].self, forKey: .data) {
+    if let value = try? container.decodeDictionary([String: Any].self, forKey: .data) {
       self = .structured(object: value)
 
     } else if let value = try? container.decodeDynamicType(forKey: .data) {

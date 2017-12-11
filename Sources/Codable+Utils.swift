@@ -42,9 +42,9 @@ struct DynamicCodingKey: CodingKey {
 
 extension KeyedDecodingContainer {
 
-  func decodeDynamicDictionary(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any> {
+  func decodeDictionary(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any> {
     let container = try nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
-    return try container.decodeDynamicDictionary(type)
+    return try container.decodeDictionary(type)
   }
 
   func decodeIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
@@ -53,10 +53,16 @@ extension KeyedDecodingContainer {
     return try decode(type, forKey: key)
   }
 
-  func decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
+  func _decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
     var container = try nestedUnkeyedContainer(forKey: key)
 
     return try container.decode(type)
+  }
+  
+  func decodeArray(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?> {
+    var container = try nestedUnkeyedContainer(forKey: key)
+    
+    return try container.decodeArray(type)
   }
 
   func decodeIfPresent(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any>? {
@@ -65,7 +71,7 @@ extension KeyedDecodingContainer {
     return try decode(type, forKey: key)
   }
 
-  func decodeDynamicDictionary(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
+  func decodeDictionary(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
     var dictionary = Dictionary<String, Any>()
 
     for key in allKeys {
@@ -101,9 +107,9 @@ extension KeyedDecodingContainer {
        return value
     } else if let value = try? decode(Double.self, forKey: key) {
       return value
-    } else if let value = try? decodeDynamicArray([Any].self, forKey: key) {
+    } else if let value = try? decodeArray([Any?].self, forKey: key) {
       return value
-    } else if let value = try? decodeDynamicDictionary([String: Any].self, forKey: key) {
+    } else if let value = try? decodeDictionary([String: Any].self, forKey: key) {
       return value
     } else {
       let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation for \(key) is not yet supported.")
@@ -115,13 +121,34 @@ extension KeyedDecodingContainer {
 
 extension UnkeyedDecodingContainer {
 
-//  mutating func decode(_ type: Array<Any?>.Type) throws -> Array<Any?> {
-//    var array: [Any?] = []
+  mutating func decodeArray(_ type: Array<Any?>.Type) throws -> Array<Any?> {
+    var array: [Any?] = []
+
+    while isAtEnd == false {
+     if let value = try? decode(Bool.self) {
+        array.append(value)
+      } else if let value = try? decode(String.self) {
+        array.append(value)
+      } else if let value = try? decode(Int.self) {
+        array.append(value)
+      } else if let value = try? decode(Double.self) {
+        array.append(value)
+      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
+        array.append(nestedDictionary)
+      } else if let nestedArray = try? decode(Array<Any>.self) {
+        array.append(nestedArray)
+     } else {
+      array.append(nil)
+      }
+    }
+    return array
+  }
+  
+//  mutating func _decode(_ type: Array<Any>.Type) throws -> Array<Any> {
+//    var array: [Any] = []
 //
 //    while isAtEnd == false {
-//      if (try? decodeNil()) != nil {
-//        array.append(nil) //to keep the position integrity
-//      } else if let value = try? decode(Bool.self) {
+//      if let value = try? decode(Bool.self) {
 //        array.append(value)
 //      } else if let value = try? decode(String.self) {
 //        array.append(value)
@@ -130,7 +157,7 @@ extension UnkeyedDecodingContainer {
 //      } else if let value = try? decode(Double.self) {
 //        array.append(value)
 //      } else if (try? decodeNil()) != nil {
-//        array.append("null") //to keep the position integrity, TODO null
+//        array.append("Null") //to keep the position integrity
 //      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
 //        array.append(nestedDictionary)
 //      } else if let nestedArray = try? decode(Array<Any>.self) {
@@ -139,34 +166,11 @@ extension UnkeyedDecodingContainer {
 //    }
 //    return array
 //  }
-  
-  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
-    var array: [Any] = []
-
-    while isAtEnd == false {
-      if let value = try? decode(Bool.self) {
-        array.append(value)
-      } else if let value = try? decode(String.self) {
-        array.append(value)
-      } else if let value = try? decode(Int.self) {
-        array.append(value)
-      } else if let value = try? decode(Double.self) {
-        array.append(value)
-      } else if (try? decodeNil()) != nil {
-        array.append("Null") //to keep the position integrity
-      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
-        array.append(nestedDictionary)
-      } else if let nestedArray = try? decode(Array<Any>.self) {
-        array.append(nestedArray)
-      }
-    }
-    return array
-  }
 
   mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
     let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
 
-    return try nestedContainer.decodeDynamicDictionary(type)
+    return try nestedContainer.decodeDictionary(type)
   }
 }
 
@@ -189,7 +193,7 @@ extension KeyedEncodingContainer {
       try nestedKeyedContainer.encodeDynamicDictionary(value)
     case let value as Array<Any>:
       var nestedContainer = nestedUnkeyedContainer(forKey: key)
-      try nestedContainer.encode(value)
+      try nestedContainer.encodeArray(value)
     default:
       let context = EncodingError.Context(codingPath: codingPath, debugDescription: "The encoding operation for \(value) is not yet supported.")
       throw EncodingError.invalidValue(value, context)
@@ -218,7 +222,7 @@ extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the whe
         try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
       case let array as Array<Any>:
         var nestedContainer = nestedUnkeyedContainer(forKey: key)
-        try nestedContainer.encode(array)
+        try nestedContainer.encodeArray(array)
         continue
       default:
         continue
@@ -229,8 +233,35 @@ extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the whe
 }
 
 extension UnkeyedEncodingContainer {
+  
+  mutating func encodeArray(_ value: Array<Any?>) throws {
+    for optionalElement in value {
+      guard let element = optionalElement else {
+        try encodeNil()
+        continue
+      }
+      switch element {
+      case let bool as Bool:
+        try encode(bool)
+      case let string as String:
+        try encode(string)
+      case let int as Int:
+        try encode(int)
+      case let double as Double:
+        try encode(double)
+      case let dictionary as Dictionary<String, Any>:
+        var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self)
+        try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
+      case let array as Array<Any>:
+        var nestedContainer = nestedUnkeyedContainer()
+        try nestedContainer.encodeArray(array)
+      default:
+        continue
+      }
+    }
+  }
 
-  mutating func encode(_ value: Array<Any>) throws {
+  mutating func _encode(_ value: Array<Any>) throws {
     for element in value {
       switch element {
       case let bool as Bool:

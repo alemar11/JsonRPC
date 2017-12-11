@@ -25,7 +25,7 @@ import Foundation
 
 /// A JSON-RPC params field.
 public enum Parameters {
-  case positional(array: [Any])
+  case positional(array: [Any?])
   case named(object: [String: Any]) //TODO: rename object?
 }
 
@@ -34,13 +34,11 @@ extension Parameters: Codable {
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
-    //print(values.contains(.params)) //check in the future maybe not here?
 
-
-    if let params = try? values.decodeDynamicArray(Array<Any>.self, forKey: .params) {
+    if let params = try? values.decodeArray(Array<Any?>.self, forKey: .params) {
       self = .positional(array: params)
 
-    } else if let params: [String: Any] = try? values.decodeDynamicDictionary([String: Any].self, forKey: .params) {
+    } else if let params: [String: Any] = try? values.decodeDictionary([String: Any].self, forKey: .params) {
       self = .named(object: params)
 
     } else {
@@ -55,7 +53,7 @@ extension Parameters: Codable {
     switch self {
     case .positional(let array):
       var container = encoder.unkeyedContainer()
-      try container.encode(array)
+      try container.encodeArray(array)
 
     case .named(let object):
       var container = encoder.container(keyedBy: DynamicCodingKey.self)
@@ -65,8 +63,3 @@ extension Parameters: Codable {
 
 }
 
-
-
-
-
-// ???: https://gist.github.com/paulofaria/339ffa172cc84b2725f2b5a598f4fda9
