@@ -62,23 +62,6 @@ public enum ErrorObject: Error {
     }
   }
 
-  private static func defaultMessage(for code: Int) -> String{
-    switch code {
-    case -32700:
-      return "Parse Error"
-    case -32600:
-      return "Invalid Request"
-    case -32601:
-      return "Method Not Found"
-    case -32602:
-      return "Invalid Params"
-    case -32603:
-      return "Internal Error"
-    default:
-      return "Server Error"
-    }
-  }
-
   /// A Primitive or Structured value that contains additional information about the error.
   /// This may be omitted.
   /// The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
@@ -95,17 +78,51 @@ public enum ErrorObject: Error {
 
   /// Creates a new raw error.
   public init?(code: Int, message: String, data: ErrorData? = nil) {
-    if type(of: self).isValidCode(code) {
+    if type(of: self).isValidImplementationDefinedCode(code) {
       self = .raw(code: code, message: message, data: data)
       return
     }
     return nil
   }
-
-  private static func isValidCode(_ code: Int) -> Bool {
-    return -32099 ... -32000 ~= code
+  
+  public init?(code: Int, data: ErrorData? = nil) {
+    let message = type(of: self).defaultMessage(for: code)
+    if let error =  ErrorObject(code: code, message: message, data: data) {
+      self = error
+      return
+    }
+    return nil
   }
 
+}
+
+// MARK - Utility
+
+extension ErrorObject {
+  
+  /// Returns a default error message for a given error `code`.
+  public static func defaultMessage(for code: Int) -> String{
+    switch code {
+    case -32700:
+      return "Parse Error"
+    case -32600:
+      return "Invalid Request"
+    case -32601:
+      return "Method Not Found"
+    case -32602:
+      return "Invalid Params"
+    case -32603:
+      return "Internal Error"
+    default:
+      return "Server Error"
+    }
+  }
+  
+  /// Returns `true` if the code is defined in the range for the implementation-defined server-errors.
+  public static func isValidImplementationDefinedCode(_ code: Int) -> Bool {
+    return -32099 ... -32000 ~= code
+  }
+  
 }
 
 // MARK: - Codable
@@ -184,7 +201,7 @@ extension ErrorObject: Codable {
       }
 
     case .raw(code: let code, message: let message, data: let data):
-      guard ErrorObject.isValidCode(code) else {
+      guard ErrorObject.isValidImplementationDefinedCode(code) else {
         let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "\(code) is not defined inside the range between -32099 and -32000.")
         throw EncodingError.invalidValue(code, context)
       }
