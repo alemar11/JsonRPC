@@ -24,9 +24,18 @@
 import XCTest
 @testable import JsonRPC
 
+#if os(Linux)
+  extension ErrorOjectTests {
+    static var allTests = [
+      ("testPredefinedCase", testPredefinedCase),
+      ("testInitializationRawError", testInitializationRawError)
+    ]
+  }
+#endif
+
 class ErrorOjectTests: XCTestCase {
   
-  func test1() throws {
+  func testPredefinedCase() throws {
     do {
       let error = ErrorObject.parseError(message: "message 1", data: nil)
       XCTAssertTrue(error.code == -32700)
@@ -63,5 +72,14 @@ class ErrorOjectTests: XCTestCase {
       XCTAssertTrue(error.message == "message 4")
       XCTAssertNil(error.data)
     }
+  }
+  
+  func testInitializationRawError() {
+    
+    do {
+      let error = ErrorObject(code: -32010)
+      XCTAssertTrue(error?.message == "Server Error")
+    }
+    
   }
 }

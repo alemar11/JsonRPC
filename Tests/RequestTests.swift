@@ -69,6 +69,7 @@ class RequestTests: XCTestCase {
   }
   
   func testDecodingRequestWithPositionalParameters() throws {
+    do {
     let json = """
           {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1}
       """.data(using: .utf8)!
@@ -91,6 +92,34 @@ class RequestTests: XCTestCase {
     default:
       XCTFail()
     }
+    }
+    
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "method": "subtract", "params": [42, null, 11], "id": 1}
+      """.data(using: .utf8)!
+      
+      let request = try JSONDecoder().decode(Request.self, from: json)
+      
+      XCTAssertTrue(request.id == Id.number(1))
+      XCTAssertTrue(request.method == "subtract")
+      
+      guard let parameters = request.params else {
+        XCTAssertNotNil(request.params)
+        return
+      }
+      
+      switch parameters {
+      case .positional(let parameters):
+        XCTAssertTrue(parameters.count == 3)
+        XCTAssertTrue(parameters.first! as! Int == 42)
+        XCTAssertNil(parameters[1])
+        XCTAssertTrue(parameters.last! as! Int == 11)
+      default:
+        XCTFail()
+      }
+    }
+
     
   }
   
