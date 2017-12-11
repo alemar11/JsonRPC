@@ -27,10 +27,12 @@ import XCTest
 #if os(Linux)
   extension ResponseTests {
     static var allTests = [
+      ("testDecodingInvalidResponse", testDecodingInvalidResponse),
       ("testDecodingSuccessResponse", testDecodingSuccessResponse),
       ("testDecodingErrorResponse", testDecodingErrorResponse),
       ("testEncodingSuccessResponse", testEncodingSuccessResponse),
-      ("testEncodingErrorResponse", testEncodingErrorResponse)
+      ("testEncodingErrorResponse", testEncodingErrorResponse),
+      ("testEncodingErrorResponseWithPredefinedCase", testEncodingErrorResponseWithPredefinedCase)
     ]
   }
 #endif
@@ -38,6 +40,24 @@ import XCTest
 class ResponseTests: XCTestCase {
   
   // MARK: - Decoding
+  
+  func testDecodingInvalidResponse() throws {
+    /// missing result and error at the same time
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "id": 4}
+      """.data(using: .utf8)!
+      XCTAssertThrowsError(try JSONDecoder().decode(Response.self, from: json))
+    }
+    
+    /// error and result populated at the same time
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "id": 4, "result": 1, "error": {"code": -32601, "message": "Method not found"} }
+      """.data(using: .utf8)!
+      XCTAssertThrowsError(try JSONDecoder().decode(Response.self, from: json))
+    }
+  }
   
   func testDecodingSuccessResponse() throws {
     
@@ -436,6 +456,94 @@ class ResponseTests: XCTestCase {
       XCTAssertNil(ErrorObject(code: -1, message: "Something went wrong."))
     }
     
+  }
+  
+  func testEncodingErrorResponseWithPredefinedCase() throws {
+    do {
+      let error = ErrorObject.parseError(message: "parse error", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":1"))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"code\":-32700"))
+      
+    }
+    
+    do {
+      let error = ErrorObject.invalidRequest(message: "invalid request", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":1"))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"code\":-32600"))
+    }
+    
+    do {
+      let error = ErrorObject.methodNotFound(message: "method not found", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":1"))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"code\":-32601"))
+    }
+
+    do {
+      let error = ErrorObject.invalidParams(message: "invalid params", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":1"))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"code\":-32602"))
+    }
+
+    do {
+      let error = ErrorObject.internalError(message: "internal error", data: nil)
+      let encoder = JSONEncoder()
+      let response = Response.error(id: Id.number(1), error: error)
+      let jsonData = try encoder.encode(response)
+      
+      guard let json = String(data: jsonData, encoding: .utf8) else {
+        XCTFail("Failed while converting Data to String.")
+        return
+      }
+      
+      XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
+      XCTAssertTrue(json.contains("\"id\":1"))
+      XCTAssertTrue(json.contains("\"error\":{"))
+      XCTAssertTrue(json.contains("\"code\":-32603"))
+    }
   }
   
 }
