@@ -44,7 +44,7 @@ extension Parameters: Codable {
       self = .named(object: params)
 
     } else {
-      let context =  DecodingError.Context(codingPath: [Parameters.CodingKeys.params], debugDescription: "Expected '[String: Any] or [Any]' for the 'params' key.")
+      let context =  DecodingError.Context(codingPath: [CodingKeys.params], debugDescription: "Expected '[String: Any] or [Any]' for the 'params' key.")
       throw DecodingError.dataCorrupted(context)
     }
 

@@ -64,23 +64,27 @@ extension Response: Codable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     
-    guard let jsonrpc = try? container.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else { throw TestError.invalid }
+    guard let jsonrpc = try? container.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else {
+      let context = DecodingError.Context(codingPath: [CodingKeys.jsonrpc], debugDescription: "JSON RPC version not supported.")
+      throw DecodingError.dataCorrupted(context)
+    }
     let id = try Id(from: decoder)
     let error = try? ErrorObject(from: decoder)
     let result = try? container.decodeDynamicType(forKey: .result)
-    
-    if let error = error {
+
+    switch (result, error) {
+    case (_?, _?):
+      let context = DecodingError.Context(codingPath: [CodingKeys.error, CodingKeys.result], debugDescription: "The keys 'error' and 'result' cannot be populated at the same time.")
+      throw DecodingError.dataCorrupted(context)
+    case (nil, let error?):
       self = .error(id: id, error: error)
-    } else if let result = result {
-      if let resultValue = result {
-        self = .success(id: id, result: resultValue)
-      } else {
-        throw TestError.invalid
-      }
-    } else {
-      throw TestError.invalid
+    case (let result?, nil):
+      self = .success(id: id, result: result)
+    case (nil, nil):
+      let context = DecodingError.Context(codingPath: [CodingKeys.error, CodingKeys.result], debugDescription: "The keys 'error' and 'result' cannot be nil at the same time.")
+      throw DecodingError.dataCorrupted(context)
     }
-    
+      
   }
   
   public func encode(to encoder: Encoder) throws {

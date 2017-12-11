@@ -44,11 +44,6 @@ extension Request {
 
 }
 
-//TODO: remove this
-enum TestError: Error {
-  case invalid
-}
-
 // MARK: - Codable
 
 extension Request: Codable {
@@ -57,8 +52,14 @@ extension Request: Codable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
 
-    guard let jsonrpc = try? values.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else { throw TestError.invalid }
-    guard let method = try? values.decode(String.self, forKey: .method), method != "" else { throw TestError.invalid }
+    guard let jsonrpc = try? values.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else {
+      let context = DecodingError.Context(codingPath: [CodingKeys.jsonrpc], debugDescription: "JSON RPC version not supported.")
+      throw DecodingError.dataCorrupted(context)
+    }
+    guard let method = try? values.decode(String.self, forKey: .method), method != "" else {
+      let context = DecodingError.Context(codingPath:  [CodingKeys.method], debugDescription: "The key 'method' cannot be nil or empty.")
+      throw DecodingError.dataCorrupted(context)
+    }
 
     let params = try? Parameters(from: decoder)
     let id = try? Id(from: decoder)

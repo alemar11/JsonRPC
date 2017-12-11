@@ -134,11 +134,12 @@ extension ErrorObject: Codable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
 
     let components = try values.decodeDynamicDictionary(Dictionary<String,Any>.self, forKey: .error)
-    guard let codeValue = components["code"], let code = codeValue as? Int else {
-      throw TestError.invalid
+    guard let codeValue = components[CodingKeys.code.rawValue], let code = codeValue as? Int else {
+      let context =  DecodingError.Context(codingPath: [CodingKeys.code], debugDescription: "Key 'code' must be an Int.")
+      throw DecodingError.dataCorrupted(context)
     }
 
-    let message = components["message"] as? String
+    let message = components[CodingKeys.message.rawValue] as? String
 
     let errorData = try? ErrorData(from: decoder)
 

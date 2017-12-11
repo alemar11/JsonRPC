@@ -35,12 +35,12 @@ extension ErrorData: Codable {
     if let value = try? container.decodeDynamicDictionary([String: Any].self, forKey: .data) {
       self = .structured(object: value)
 
-    } else if let optionalValue = try? container.decodeDynamicType(forKey: .data), let value = optionalValue {
+    } else if let value = try? container.decodeDynamicType(forKey: .data) {
        self = .primitive(value: value)
 
     } else {
-      let context =  DecodingError.Context(codingPath: [ErrorData.CodingKeys.data], debugDescription: "Key 'data' not found.")
-      throw DecodingError.keyNotFound(ErrorData.CodingKeys.data, context)
+      let context =  DecodingError.Context(codingPath: [CodingKeys.data], debugDescription: "The key 'data' not found.")
+      throw DecodingError.keyNotFound(CodingKeys.data, context)
     }
 
   }

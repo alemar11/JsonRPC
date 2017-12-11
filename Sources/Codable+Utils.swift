@@ -92,7 +92,7 @@ extension KeyedDecodingContainer {
     return dictionary
   }
 
-  func decodeDynamicType(forKey key: K) throws -> Any? {
+  func decodeDynamicType(forKey key: K) throws -> Any {
     if let value = try? decode(Bool.self, forKey: key) {
         return value
     } else if let value = try? decode(String.self, forKey: key) {
@@ -106,7 +106,8 @@ extension KeyedDecodingContainer {
     } else if let value = try? decodeDynamicDictionary([String: Any].self, forKey: key) {
       return value
     } else {
-      return nil
+      let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation for \(key) is not yet supported.")
+      throw DecodingError.dataCorrupted(context)
     }
 
   }

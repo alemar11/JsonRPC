@@ -27,9 +27,6 @@ public enum Id {
   case number(Int)
 }
 
-
-// https://github.com/RLovelett/langserver-swift/blob/79ddd88a8ac7a2b3ff86c0e25ab8154da963ba0f/Sources/BaseProtocol/Types/Request.swift
-
 extension Id: Codable {
   enum CodingKeys: String, CodingKey { case id }
 
@@ -41,7 +38,8 @@ extension Id: Codable {
     } else if let id = try? values.decode(String.self, forKey: .id) {
       self = .string(id)
     } else {
-      throw TestError.invalid
+      let context =  DecodingError.Context(codingPath: [CodingKeys.id], debugDescription: "Key 'id' must be an Int or a String.")
+      throw DecodingError.dataCorrupted(context)
     }
 
   }
