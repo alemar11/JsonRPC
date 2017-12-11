@@ -9,7 +9,7 @@ let package = Package(
   ],
   targets: [
     .target(name: "JsonRPC", path: "Sources"),
-    .testTarget(name: "JsonRPCTests", dependencies: ["JsonRPC"], path: "Tests")
+    .testTarget(name: "JsonRPCTests", dependencies: ["JsonRPC"])
   ],
     swiftLanguageVersions: [4]
 )
