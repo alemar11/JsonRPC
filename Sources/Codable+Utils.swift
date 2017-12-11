@@ -47,17 +47,17 @@ extension KeyedDecodingContainer {
     return try container.decodeDictionary(type)
   }
 
-  func decodeIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
+  func decodeDictionaryIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
     guard contains(key) else { return nil }
 
-    return try decode(type, forKey: key)
+    return try decodeDictionary(type, forKey: key)
   }
 
-  func _decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
-    var container = try nestedUnkeyedContainer(forKey: key)
-
-    return try container.decode(type)
-  }
+//  func _decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
+//    var container = try nestedUnkeyedContainer(forKey: key)
+//
+//    return try container.decode(type)
+//  }
   
   func decodeArray(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?> {
     var container = try nestedUnkeyedContainer(forKey: key)
@@ -65,10 +65,10 @@ extension KeyedDecodingContainer {
     return try container.decodeArray(type)
   }
 
-  func decodeIfPresent(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any>? {
+  func decodeArrayIfPresent(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?>? {
     guard contains(key) else { return nil }
 
-    return try decode(type, forKey: key)
+    return try decodeArray(type, forKey: key)
   }
 
   func decodeDictionary(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
@@ -167,7 +167,7 @@ extension UnkeyedDecodingContainer {
 //    return array
 //  }
 
-  mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
+  mutating func decodeDictionary(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
     let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
 
     return try nestedContainer.decodeDictionary(type)
@@ -261,28 +261,28 @@ extension UnkeyedEncodingContainer {
     }
   }
 
-  mutating func _encode(_ value: Array<Any>) throws {
-    for element in value {
-      switch element {
-      case let bool as Bool:
-        try encode(bool)
-      case let string as String:
-        try encode(string)
-      case let int as Int:
-        try encode(int)
-      case let double as Double:
-        try encode(double)
-      case let dictionary as Dictionary<String, Any>:
-        var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self)
-        try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
-      case let array as Array<Any>:
-        var nestedContainer = nestedUnkeyedContainer()
-        try nestedContainer.encode(array)
-      default:
-        continue
-      }
-    }
-  }
+//  mutating func _encode(_ value: Array<Any>) throws {
+//    for element in value {
+//      switch element {
+//      case let bool as Bool:
+//        try encode(bool)
+//      case let string as String:
+//        try encode(string)
+//      case let int as Int:
+//        try encode(int)
+//      case let double as Double:
+//        try encode(double)
+//      case let dictionary as Dictionary<String, Any>:
+//        var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self)
+//        try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
+//      case let array as Array<Any>:
+//        var nestedContainer = nestedUnkeyedContainer()
+//        try nestedContainer.encode(array)
+//      default:
+//        continue
+//      }
+//    }
+//  }
 
 }
 
