@@ -84,14 +84,15 @@ extension KeyedDecodingContainer {
       } else if let doubleValue = try? decode(Double.self, forKey: key) {
         dictionary[key.stringValue] = doubleValue
       } else if (try? decodeNil(forKey: key)) != nil {
+        //dictionary[key.stringValue] = nil
         continue
       } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self, forKey: key) {
         dictionary[key.stringValue] = nestedDictionary
       } else if let nestedArray = try? decode(Array<Any>.self, forKey: key) {
         dictionary[key.stringValue] = nestedArray
-      } else if try decodeNil(forKey: key) {
-        //TODO: test this, add Float
-        //dictionary[key.stringValue] = nil
+      } else {
+        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation for \(key) is not yet supported.")
+        throw DecodingError.dataCorrupted(context)
       }
     }
 
@@ -190,7 +191,7 @@ extension KeyedEncodingContainer {
       try encode(value, forKey: key)
     case let value as Dictionary<String, Any>:
       var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
-      try nestedKeyedContainer.encodeDynamicDictionary(value)
+      try nestedKeyedContainer.encodeDictionary(value)
     case let value as Array<Any>:
       var nestedContainer = nestedUnkeyedContainer(forKey: key)
       try nestedContainer.encodeArray(value)
@@ -204,7 +205,7 @@ extension KeyedEncodingContainer {
 
 extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the where clause should be defined?
 
-  mutating func encodeDynamicDictionary(_ dictionary: Dictionary<String, Any>) throws {
+  mutating func encodeDictionary(_ dictionary: Dictionary<String, Any>) throws {
 
     for (key, value) in dictionary {
       let key = DynamicCodingKey(stringValue: key)!
@@ -219,13 +220,13 @@ extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the whe
         try encode(double, forKey: key)
       case let dictionary as Dictionary<String, Any>:
         var nestedKeyedContainer = nestedContainer(keyedBy: Key.self, forKey: key)
-        try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
+        try nestedKeyedContainer.encodeDictionary(dictionary)
       case let array as Array<Any>:
         var nestedContainer = nestedUnkeyedContainer(forKey: key)
         try nestedContainer.encodeArray(array)
-        continue
       default:
-        continue
+        try encodeNil(forKey: key)
+        //continue
       }
     }
   }
@@ -251,7 +252,7 @@ extension UnkeyedEncodingContainer {
         try encode(double)
       case let dictionary as Dictionary<String, Any>:
         var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self)
-        try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
+        try nestedKeyedContainer.encodeDictionary(dictionary)
       case let array as Array<Any>:
         var nestedContainer = nestedUnkeyedContainer()
         try nestedContainer.encodeArray(array)

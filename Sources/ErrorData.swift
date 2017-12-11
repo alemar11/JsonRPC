@@ -55,7 +55,7 @@ extension ErrorData: Codable {
 
     case .structured(let dictionary):
       var container = encoder.container(keyedBy: DynamicCodingKey.self)
-      try container.encodeDynamicDictionary(dictionary)
+      try container.encodeDictionary(dictionary)
     }
   }
 }

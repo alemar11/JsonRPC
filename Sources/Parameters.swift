@@ -38,11 +38,11 @@ extension Parameters: Codable {
     if let params = try? values.decodeArray(Array<Any?>.self, forKey: .params) {
       self = .positional(array: params)
 
-    } else if let params: [String: Any] = try? values.decodeDictionary([String: Any].self, forKey: .params) {
+    } else if let params = try? values.decodeDictionary([String: Any].self, forKey: .params) {
       self = .named(object: params)
 
     } else {
-      let context =  DecodingError.Context(codingPath: [CodingKeys.params], debugDescription: "Expected '[String: Any] or [Any]' for the 'params' key.")
+      let context =  DecodingError.Context(codingPath: [CodingKeys.params], debugDescription: "Expected '[String: Any] or [Any?]' for the 'params' key.")
       throw DecodingError.dataCorrupted(context)
     }
 
@@ -57,7 +57,7 @@ extension Parameters: Codable {
 
     case .named(let object):
       var container = encoder.container(keyedBy: DynamicCodingKey.self)
-      try container.encodeDynamicDictionary(object)
+      try container.encodeDictionary(object)
     }
   }
 
