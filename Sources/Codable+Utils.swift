@@ -43,7 +43,7 @@ struct DynamicCodingKey: CodingKey {
 extension KeyedDecodingContainer {
 
   func decodeDynamicDictionary(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any> {
-    let container = try self.nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
+    let container = try nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
     return try container.decodeDynamicDictionary(type)
   }
 
@@ -54,7 +54,7 @@ extension KeyedDecodingContainer {
   }
 
   func decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
-    var container = try self.nestedUnkeyedContainer(forKey: key)
+    var container = try nestedUnkeyedContainer(forKey: key)
 
     return try container.decode(type)
   }
@@ -164,7 +164,7 @@ extension UnkeyedDecodingContainer {
   }
 
   mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
-    let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
+    let nestedContainer = try nestedContainer(keyedBy: DynamicCodingKey.self)
 
     return try nestedContainer.decodeDynamicDictionary(type)
   }
@@ -185,10 +185,10 @@ extension KeyedEncodingContainer {
     case let value as Double:
       try encode(value, forKey: key)
     case let value as Dictionary<String, Any>:
-      var nestedKeyedContainer = self.nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
+      var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
       try nestedKeyedContainer.encodeDynamicDictionary(value)
     case let value as Array<Any>:
-      var nestedContainer = self.nestedUnkeyedContainer(forKey: key)
+      var nestedContainer = nestedUnkeyedContainer(forKey: key)
       try nestedContainer.encode(value)
     default:
       let context = EncodingError.Context(codingPath: codingPath, debugDescription: "The encoding operation for \(value) is not yet supported.")
@@ -214,11 +214,10 @@ extension KeyedEncodingContainer where Key == DynamicCodingKey { //TODO: the whe
       case let double as Double:
         try encode(double, forKey: key)
       case let dictionary as Dictionary<String, Any>:
-        //TODO: test
-        var nestedKeyedContainer = self.nestedContainer(keyedBy: Key.self, forKey: key)
+        var nestedKeyedContainer = nestedContainer(keyedBy: Key.self, forKey: key)
         try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
       case let array as Array<Any>:
-        var nestedContainer = self.nestedUnkeyedContainer(forKey: key)
+        var nestedContainer = nestedUnkeyedContainer(forKey: key)
         try nestedContainer.encode(array)
         continue
       default:
@@ -243,10 +242,10 @@ extension UnkeyedEncodingContainer {
       case let double as Double:
         try encode(double)
       case let dictionary as Dictionary<String, Any>:
-        var nestedKeyedContainer = self.nestedContainer(keyedBy: DynamicCodingKey.self)
+        var nestedKeyedContainer = nestedContainer(keyedBy: DynamicCodingKey.self)
         try nestedKeyedContainer.encodeDynamicDictionary(dictionary)
       case let array as Array<Any>:
-        var nestedContainer = self.nestedUnkeyedContainer()
+        var nestedContainer = nestedUnkeyedContainer()
         try nestedContainer.encode(array)
       default:
         continue
