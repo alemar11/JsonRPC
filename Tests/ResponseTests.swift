@@ -560,7 +560,6 @@ class ResponseTests: XCTestCase {
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
       XCTAssertTrue(json.contains("\"id\":1"))
       XCTAssertTrue(json.contains("\"error\":{"))
-      print(json)
       XCTAssertTrue(json.contains("\"code\":-32600"))
     }
     
