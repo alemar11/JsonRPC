@@ -47,6 +47,10 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "result": 19, "id": 4}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.number(4))
+      XCTAssertTrue(response.result as! Int == 19)
+      XCTAssertNil(response.error)
+      
       switch response {
       case .success(id: let id, result: let result):
         XCTAssertTrue(id == Id.number(4))
@@ -62,6 +66,10 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "result": 19.19, "id": "test"}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.string("test"))
+      XCTAssertTrue(response.result as! Double == 19.19)
+      XCTAssertNil(response.error)
+      
       switch response {
       case .success(id: let id, result: let result):
         XCTAssertTrue(id == Id.string("test"))
@@ -85,6 +93,12 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "result": ["hello", 5], "id": "9"}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.string("9"))
+      XCTAssertTrue((response.result as! [Any]).count == 2)
+      XCTAssertTrue((response.result as! [Any])[0] as! String == "hello")
+      XCTAssertTrue((response.result as! [Any])[1] as! Int == 5)
+      XCTAssertNil(response.error)
+      
       switch response {
       case .success(id: let id, result: let result):
         XCTAssertTrue(id == Id.string("9"))
@@ -102,6 +116,11 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "result": {"key1": 2}, "id": 1}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.number(1))
+      XCTAssertTrue((response.result as! [String: Any]).count == 1)
+      XCTAssertTrue((response.result as! [String: Any])["key1"] as! Int == 2)
+      XCTAssertNil(response.error)
+      
       switch response {
       case .success(id: let id, result: let result):
         XCTAssertTrue(id == Id.number(1))
@@ -121,6 +140,11 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}, "id": "1"}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.string("1"))
+      XCTAssertTrue(response.error?.code == -32601)
+      XCTAssertTrue(response.error?.message == "Method not found")
+      XCTAssertNil(response.error?.data)
+      XCTAssertNil(response.result)
       
       switch response {
       case .error(id: let id, error: let error):
@@ -140,6 +164,11 @@ class ResponseTests: XCTestCase {
           {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found", "data": true}, "id": 12}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.number(12))
+      XCTAssertTrue(response.error?.code == -32601)
+      XCTAssertTrue(response.error?.message == "Method not found")
+      XCTAssertNotNil(response.error?.data)
+      XCTAssertNil(response.result)
       
       switch response {
       case .error(id: let id, error: let error):
@@ -171,7 +200,12 @@ class ResponseTests: XCTestCase {
            {"jsonrpc": "2.0", "error": {"code": -32600, "message": "Invalid Request", "data": {"value": 23, "nilValue": null} }, "id": 11}
           """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
-
+      XCTAssertTrue(response.id == Id.number(11))
+      XCTAssertTrue(response.error?.code == -32600)
+      XCTAssertTrue(response.error?.message == "Invalid Request")
+      XCTAssertNotNil(response.error?.data)
+      XCTAssertNil(response.result)
+      
       switch response {
       case .error(id: let id, error: let error):
         XCTAssertNotNil(id)
