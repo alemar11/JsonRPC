@@ -116,7 +116,7 @@ extension ErrorObject: Codable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
 
-    let components = try values.decodeDynamic(Dictionary<String,Any>.self, forKey: .error)
+    let components = try values.decodeDynamicDictionary(Dictionary<String,Any>.self, forKey: .error)
     guard let codeValue = components["code"], let code = codeValue as? Int else {
       throw TestError.invalid
     }

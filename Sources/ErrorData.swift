@@ -33,7 +33,7 @@ extension ErrorData: Codable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self).nestedContainer(keyedBy: CodingKeys.self, forKey: .error)
 
-    if let value = try? container.decodeDynamic([String: Any].self, forKey: .data) {
+    if let value = try? container.decodeDynamicDictionary([String: Any].self, forKey: .data) {
       self = .structured(object: value)
 
     } else if let value = try? container.decode(Bool.self, forKey: .data) {
@@ -61,21 +61,8 @@ extension ErrorData: Codable {
     switch self {
     case .primitive(let value):
      var container = encoder.singleValueContainer()
+     try container.encodeAny(value)
 
-     //TODO: refactor
-     switch value {
-     case let value as Bool:
-      try container.encode(value)
-     case let value as String:
-       try container.encode(value)
-     case let value as Int:
-       try container.encode(value)
-     case let value as Double:
-       try container.encode(value)
-     default:
-      let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "Undefined type.")
-      throw EncodingError.invalidValue(value, context)
-      }
     case .structured(let dictionary):
       var container = encoder.container(keyedBy: DynamicCodingKey.self)
       try container.encodeDynamicDictionary(dictionary)

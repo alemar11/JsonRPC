@@ -46,9 +46,9 @@ struct DynamicCodingKey: CodingKey {
 
 extension KeyedDecodingContainer {
 
-  func decodeDynamic(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any> {
+  func decodeDynamicDictionary(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any> {
     let container = try self.nestedContainer(keyedBy: DynamicCodingKey.self, forKey: key)
-    return try container.decodeDynamic(type)
+    return try container.decodeDynamicDictionary(type)
   }
 
   func decodeIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
@@ -57,7 +57,7 @@ extension KeyedDecodingContainer {
     return try decode(type, forKey: key)
   }
 
-  func decodeDynamic(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
+  func decodeDynamicArray(_ type: Array<Any>.Type, forKey key: K) throws -> Array<Any> {
     var container = try self.nestedUnkeyedContainer(forKey: key)
 
     return try container.decode(type)
@@ -69,7 +69,7 @@ extension KeyedDecodingContainer {
     return try decode(type, forKey: key)
   }
 
-  func decodeDynamic(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
+  func decodeDynamicDictionary(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
     var dictionary = Dictionary<String, Any>()
 
     for key in allKeys {
@@ -104,9 +104,9 @@ extension KeyedDecodingContainer {
        return value
     } else if let value = try? decode(Double.self, forKey: key) {
       return value
-    } else if let value = try? decodeDynamic([Any].self, forKey: key) {
+    } else if let value = try? decodeDynamicArray([Any].self, forKey: key) {
       return value
-    } else if let value = try? decodeDynamic([String: Any].self, forKey: key) {
+    } else if let value = try? decodeDynamicDictionary([String: Any].self, forKey: key) {
       return value
     } else {
       return nil
@@ -197,6 +197,24 @@ extension UnkeyedEncodingContainer {
 
 }
 
+extension SingleValueEncodingContainer {
+  mutating func encodeAny(_ value: Any) throws {
+    switch value {
+    case let value as Bool:
+      try encode(value)
+    case let value as String:
+      try encode(value)
+    case let value as Int:
+      try encode(value)
+    case let value as Double:
+      try encode(value)
+    default:
+      let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Undefined type.")
+      throw EncodingError.invalidValue(value, context)
+    }
+  }
+}
+
 extension UnkeyedDecodingContainer {
 
   mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
@@ -225,6 +243,6 @@ extension UnkeyedDecodingContainer {
   mutating func decode(_ type: Dictionary<String, Any>.Type) throws -> Dictionary<String, Any> {
     let nestedContainer = try self.nestedContainer(keyedBy: DynamicCodingKey.self)
 
-    return try nestedContainer.decodeDynamic(type)
+    return try nestedContainer.decodeDynamicDictionary(type)
   }
 }

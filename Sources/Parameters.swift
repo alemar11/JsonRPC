@@ -41,10 +41,10 @@ extension Parameters: Codable {
     //print(values.contains(.params)) //check in the future maybe not here?
 
 
-    if let params = try? values.decodeDynamic(Array<Any>.self, forKey: .params) {
+    if let params = try? values.decodeDynamicArray(Array<Any>.self, forKey: .params) {
       self = .positional(array: params)
 
-    } else if let params: [String: Any] = try? values.decodeDynamic([String: Any].self, forKey: .params) {
+    } else if let params: [String: Any] = try? values.decodeDynamicDictionary([String: Any].self, forKey: .params) {
       self = .named(object: params)
 
     } else {
