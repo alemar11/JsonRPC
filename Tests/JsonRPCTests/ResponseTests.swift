@@ -24,19 +24,16 @@
 import XCTest
 @testable import JsonRPC
 
-#if os(Linux)
-  extension ResponseTests {
-    static var allTests = [
-      ("testDecodingInvalidResponse", testDecodingInvalidResponse),
-      ("testDecodingSuccessResponse", testDecodingSuccessResponse),
-      ("testDecodingErrorResponse", testDecodingErrorResponse),
-      ("testDecodingErrorResponseWithPredefinedCase", testDecodingErrorResponseWithPredefinedCase),
-      ("testEncodingSuccessResponse", testEncodingSuccessResponse),
-      ("testEncodingErrorResponse", testEncodingErrorResponse),
-      ("testEncodingErrorResponseWithPredefinedCase", testEncodingErrorResponseWithPredefinedCase)
-    ]
-  }
-#endif
+extension ResponseTests {
+  static var allTests = [
+    ("testDecodingInvalidResponse", testDecodingInvalidResponse),
+    ("testDecodingSuccessResponse", testDecodingSuccessResponse),
+    ("testDecodingErrorResponse", testDecodingErrorResponse),
+    ("testEncodingSuccessResponse", testEncodingSuccessResponse),
+    ("testEncodingErrorResponse", testEncodingErrorResponse),
+    ("testEncodingErrorResponseWithPredefinedCase", testEncodingErrorResponseWithPredefinedCase)
+  ]
+}
 
 class ResponseTests: XCTestCase {
   
@@ -273,7 +270,7 @@ class ResponseTests: XCTestCase {
         XCTAssertNotNil(error.data)
         switch error {
         case .raw(code: let code, message: let message, data: let data):
-           XCTAssertTrue(code == -32010)
+          XCTAssertTrue(code == -32010)
           XCTAssertTrue(message == "Server Error")
           switch data! {
           case .structured(object: let dictionary):
@@ -307,7 +304,7 @@ class ResponseTests: XCTestCase {
     }
     
   }
-    
+  
   // MARK: - Encoding
   
   func testEncodingSuccessResponse() throws {
@@ -429,7 +426,7 @@ class ResponseTests: XCTestCase {
         XCTFail("Failed while converting Data to String.")
         return
       }
-  
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0\""))
       XCTAssertTrue(json.contains("\"id\":\"errorID\""))
       XCTAssertTrue(json.contains("\"error\":{"))
@@ -579,7 +576,7 @@ class ResponseTests: XCTestCase {
       XCTAssertTrue(json.contains("\"error\":{"))
       XCTAssertTrue(json.contains("\"code\":-32601"))
     }
-
+    
     do {
       let error = ErrorObject.invalidParams(message: "invalid params", data: nil)
       let encoder = JSONEncoder()
@@ -596,7 +593,7 @@ class ResponseTests: XCTestCase {
       XCTAssertTrue(json.contains("\"error\":{"))
       XCTAssertTrue(json.contains("\"code\":-32602"))
     }
-
+    
     do {
       let error = ErrorObject.internalError(message: "internal error", data: nil)
       let encoder = JSONEncoder()

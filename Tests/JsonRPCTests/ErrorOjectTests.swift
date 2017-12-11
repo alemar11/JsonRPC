@@ -24,14 +24,12 @@
 import XCTest
 @testable import JsonRPC
 
-#if os(Linux)
-  extension ErrorOjectTests {
-    static var allTests = [
-      ("testPredefinedCase", testPredefinedCase),
-      ("testInitializationRawError", testInitializationRawError)
-    ]
-  }
-#endif
+extension ErrorOjectTests {
+  static var allTests = [
+    ("testPredefinedCase", testPredefinedCase),
+    ("testInitializationRawError", testInitializationRawError)
+  ]
+}
 
 class ErrorOjectTests: XCTestCase {
   

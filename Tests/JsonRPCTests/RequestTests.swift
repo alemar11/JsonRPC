@@ -24,21 +24,19 @@
 import XCTest
 @testable import JsonRPC
 
-#if os(Linux)
-  extension RequestTests {
-    static var allTests = [
-      ("testDecodingRequestWithInvalidJsonRPCVersion", testDecodingRequestWithInvalidJsonRPCVersion),
-      ("testDecodingRequestWithInvalidMethod", testDecodingRequestWithInvalidMethod),
-      ("testDecodingRequestWithPositionalParameters", testDecodingRequestWithPositionalParameters),
-      ("testDecodingRequestWithNamedParameters", testDecodingRequestWithNamedParameters),
-      ("testDecodingNotificationWithPositionalParameters", testDecodingNotificationWithPositionalParameters),
-      ("testDecodingNotificationWithNamedParameters", testDecodingNotificationWithNamedParameters),
-      ("testEncodingRequestWithPositionalParameters", testEncodingRequestWithPositionalParameters),
-      ("testEncodingNotificationWithoutParameters", testEncodingNotificationWithoutParameters),
-      ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
-    ]
-  }
-#endif
+extension RequestTests {
+  static var allTests = [
+    ("testDecodingRequestWithInvalidJsonRPCVersion", testDecodingRequestWithInvalidJsonRPCVersion),
+    ("testDecodingRequestWithInvalidMethod", testDecodingRequestWithInvalidMethod),
+    ("testDecodingRequestWithPositionalParameters", testDecodingRequestWithPositionalParameters),
+    ("testDecodingRequestWithNamedParameters", testDecodingRequestWithNamedParameters),
+    ("testDecodingNotificationWithPositionalParameters", testDecodingNotificationWithPositionalParameters),
+    ("testDecodingNotificationWithNamedParameters", testDecodingNotificationWithNamedParameters),
+    ("testEncodingRequestWithPositionalParameters", testEncodingRequestWithPositionalParameters),
+    ("testEncodingNotificationWithoutParameters", testEncodingNotificationWithoutParameters),
+    ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
+  ]
+}
 
 class RequestTests: XCTestCase {
   
@@ -70,28 +68,28 @@ class RequestTests: XCTestCase {
   
   func testDecodingRequestWithPositionalParameters() throws {
     do {
-    let json = """
+      let json = """
           {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1}
       """.data(using: .utf8)!
-    
-    let request = try JSONDecoder().decode(Request.self, from: json)
-    
-    XCTAssertTrue(request.id == Id.number(1))
-    XCTAssertTrue(request.method == "subtract")
-    
-    guard let parameters = request.params else {
-      XCTAssertNotNil(request.params)
-      return
-    }
-    
-    switch parameters {
-    case .positional(let parameters):
-      XCTAssertTrue(parameters.count == 2)
-      XCTAssertTrue(parameters.first! as! Int == 42)
-      XCTAssertTrue(parameters.last! as! Int == 23)
-    default:
-      XCTFail()
-    }
+      
+      let request = try JSONDecoder().decode(Request.self, from: json)
+      
+      XCTAssertTrue(request.id == Id.number(1))
+      XCTAssertTrue(request.method == "subtract")
+      
+      guard let parameters = request.params else {
+        XCTAssertNotNil(request.params)
+        return
+      }
+      
+      switch parameters {
+      case .positional(let parameters):
+        XCTAssertTrue(parameters.count == 2)
+        XCTAssertTrue(parameters.first! as! Int == 42)
+        XCTAssertTrue(parameters.last! as! Int == 23)
+      default:
+        XCTFail()
+      }
     }
     
     do {
@@ -119,7 +117,7 @@ class RequestTests: XCTestCase {
         XCTFail()
       }
     }
-
+    
     
   }
   

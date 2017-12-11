@@ -24,21 +24,19 @@
 import XCTest
 @testable import JsonRPC
 
-#if os(Linux)
-  extension IdTests {
-    static var allTests = [
-      ("testEquatable", testEquatable)
-    ]
-  }
-#endif
+extension IdTests {
+  static var allTests = [
+    ("testEquatable", testEquatable)
+  ]
+}
 
 class IdTests: XCTestCase {
-    
+  
   func testEquatable() {
     XCTAssertTrue(Id.number(0) == Id.number(0))
     XCTAssertTrue(Id.number(0) != Id.number(10))
     XCTAssertTrue(Id.string("0") == Id.string("0"))
     XCTAssertTrue(Id.string("0") != Id.string("10"))
   }
-    
+  
 }
