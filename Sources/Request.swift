@@ -62,7 +62,7 @@ extension Request: Codable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
 
     guard let jsonrpc = try? values.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else { throw TestError.invalid }
-    guard let method = try? values.decode(String.self, forKey: .method) else { throw TestError.invalid }
+    guard let method = try? values.decode(String.self, forKey: .method), method != "" else { throw TestError.invalid }
 
     let params = try? Parameters(from: decoder)
     let id = try? Id(from: decoder)

@@ -36,16 +36,7 @@ extension ErrorData: Codable {
     if let value = try? container.decodeDynamicDictionary([String: Any].self, forKey: .data) {
       self = .structured(object: value)
 
-    } else if let value = try? container.decode(Bool.self, forKey: .data) {
-       self = .primitive(value: value)
-
-    } else if let value = try? container.decode(String.self, forKey: .data) {
-       self = .primitive(value: value)
-
-    } else if let value = try? container.decode(Int.self, forKey: .data) {
-       self = .primitive(value: value)
-
-    } else if let value = try? container.decode(Double.self, forKey: .data) {
+    } else if let optionalValue = try? container.decodeDynamicType(forKey: .data), let value = optionalValue {
        self = .primitive(value: value)
 
     } else {

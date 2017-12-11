@@ -25,39 +25,65 @@ import XCTest
 @testable import JsonRPC
 
 #if os(Linux)
-extension RequestTests {
-  static var allTests = [
-    ("testDecodingRequestWithPositionalParameters", testDecodingRequestWithPositionalParameters),
-    ("testDecodingRequestWithNamedParameters", testDecodingRequestWithNamedParameters),
-    ("testDecodingNotificationWithPositionalParameters", testDecodingNotificationWithPositionalParameters),
-    ("testDecodingNotificationWithNamedParameters", testDecodingNotificationWithNamedParameters),
-    ("testEncodingRequestWithPositionalParameters", testEncodingRequestWithPositionalParameters),
-    ("testEncodingNotificationWithoutParameters", testEncodingNotificationWithoutParameters),
-    ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
-  ]
-}
+  extension RequestTests {
+    static var allTests = [
+      ("testDecodingRequestWithInvalidJsonRPCVersion", testDecodingRequestWithInvalidJsonRPCVersion),
+      ("testDecodingRequestWithInvalidMethod", testDecodingRequestWithInvalidMethod),
+      ("testDecodingRequestWithPositionalParameters", testDecodingRequestWithPositionalParameters),
+      ("testDecodingRequestWithNamedParameters", testDecodingRequestWithNamedParameters),
+      ("testDecodingNotificationWithPositionalParameters", testDecodingNotificationWithPositionalParameters),
+      ("testDecodingNotificationWithNamedParameters", testDecodingNotificationWithNamedParameters),
+      ("testEncodingRequestWithPositionalParameters", testEncodingRequestWithPositionalParameters),
+      ("testEncodingNotificationWithoutParameters", testEncodingNotificationWithoutParameters),
+      ("testEncodingNotificationWithNamedParameters", testEncodingNotificationWithNamedParameters)
+    ]
+  }
 #endif
 
 class RequestTests: XCTestCase {
-
+  
   // MARK: - Decoding
-
+  
+  func testDecodingRequestWithInvalidJsonRPCVersion() throws {
+    let json = """
+          {"jsonrpc": "1.0", "method": "subtract", "params": [42, 23], "id": 1}
+      """.data(using: .utf8)!
+    
+    XCTAssertThrowsError(try JSONDecoder().decode(Request.self, from: json))
+  }
+  
+  func testDecodingRequestWithInvalidMethod() throws {
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "method": "", "params": [42, 23], "id": 1}
+      """.data(using: .utf8)!
+      XCTAssertThrowsError(try JSONDecoder().decode(Request.self, from: json))
+    }
+    
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "params": [42, 23], "id": 1}
+      """.data(using: .utf8)!
+      XCTAssertThrowsError(try JSONDecoder().decode(Request.self, from: json))
+    }
+  }
+  
   func testDecodingRequestWithPositionalParameters() throws {
     let json = """
           {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1}
       """.data(using: .utf8)!
-
+    
     let request = try JSONDecoder().decode(Request.self, from: json)
-
+    
     XCTAssertTrue(request.jsonrpc == "2.0")
     XCTAssertTrue(request.id == Id.number(1))
     XCTAssertTrue(request.method == "subtract")
-
+    
     guard let parameters = request.params else {
       XCTAssertNotNil(request.params)
       return
     }
-
+    
     switch parameters {
     case .positional(let parameters):
       XCTAssertTrue(parameters.count == 2)
@@ -66,26 +92,26 @@ class RequestTests: XCTestCase {
     default:
       XCTFail()
     }
-
+    
   }
-
+  
   func testDecodingRequestWithNamedParameters() throws {
     do {
       let json = """
         {"jsonrpc": "2.0", "method": "subtract", "params": {"subtrahend": 23, "minuend": 42}, "id": 3}
     """.data(using: .utf8)!
-
+      
       let request = try JSONDecoder().decode(Request.self, from: json)
-
+      
       XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.id == Id.number(3))
       XCTAssertTrue(request.method == "subtract")
-
+      
       guard let parameters = request.params else {
         XCTAssertNotNil(request.params)
         return
       }
-
+      
       switch parameters {
       case .named(let parameters):
         XCTAssertTrue(parameters["subtrahend"] as! Int == 23)
@@ -94,23 +120,23 @@ class RequestTests: XCTestCase {
         XCTFail()
       }
     }
-
+    
     do {
       let json = """
         {"jsonrpc": "2.0", "method": "subtract", "params": {"value": 23, "text": "hello world", "bool": true}, "id": 3}
     """.data(using: .utf8)!
-
+      
       let request = try JSONDecoder().decode(Request.self, from: json)
-
+      
       XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.id == Id.number(3))
       XCTAssertTrue(request.method == "subtract")
-
+      
       guard let parameters = request.params else {
         XCTAssertNotNil(request.params)
         return
       }
-
+      
       switch parameters {
       case .named(let parameters):
         XCTAssertTrue(parameters["value"] as! Int == 23)
@@ -120,26 +146,26 @@ class RequestTests: XCTestCase {
         XCTFail()
       }
     }
-
+    
   }
-
+  
   func testDecodingNotificationWithPositionalParameters() throws {
     let json = """
               {"jsonrpc": "2.0", "method": "update", "params": [1,2,3,4,5]}
               """.data(using: .utf8)!
-
+    
     let request = try JSONDecoder().decode(Request.self, from: json)
-
+    
     XCTAssertTrue(request.jsonrpc == "2.0")
     XCTAssertTrue(request.method == "update")
     XCTAssertNil(request.id)
     XCTAssertTrue(request.isNotification)
-
+    
     guard let parameters = request.params else {
       XCTAssertNotNil(request.params)
       return
     }
-
+    
     switch parameters {
     case .positional(let parameters):
       XCTAssertTrue(parameters.count == 5)
@@ -151,26 +177,26 @@ class RequestTests: XCTestCase {
     default:
       XCTFail("It should be a notification.")
     }
-
+    
   }
-
+  
   func testDecodingNotificationWithNamedParameters() throws {
     do {
       let json = """
         {"jsonrpc": "2.0", "method": "subtract", "params": {"subtrahend": 23, "minuend": 42}}
     """.data(using: .utf8)!
-
+      
       let request = try JSONDecoder().decode(Request.self, from: json)
-
+      
       XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.isNotification)
       XCTAssertTrue(request.method == "subtract")
-
+      
       guard let parameters = request.params else {
         XCTAssertNotNil(request.params)
         return
       }
-
+      
       switch parameters {
       case .named(let parameters):
         XCTAssertTrue(parameters["subtrahend"] as! Int == 23)
@@ -179,23 +205,23 @@ class RequestTests: XCTestCase {
         XCTFail()
       }
     }
-
+    
     do {
       let json = """
         {"jsonrpc": "2.0", "method": "subtract", "params": {"value": 23, "text": "hello world", "bool": true}}
     """.data(using: .utf8)!
-
+      
       let request = try JSONDecoder().decode(Request.self, from: json)
-
+      
       XCTAssertTrue(request.jsonrpc == "2.0")
       XCTAssertTrue(request.isNotification)
       XCTAssertTrue(request.method == "subtract")
-
+      
       guard let parameters = request.params else {
         XCTAssertNotNil(request.params)
         return
       }
-
+      
       switch parameters {
       case .named(let parameters):
         XCTAssertTrue(parameters["value"] as! Int == 23)
@@ -205,54 +231,54 @@ class RequestTests: XCTestCase {
         XCTFail()
       }
     }
-
+    
   }
-
+  
   // MARK: - Encoding
-
+  
   func testEncodingRequestWithPositionalParameters() throws {
     do {
       let request = Request(jsonrpc: "2.0", method: "test", id: Id.number(11), params: Parameters.positional(array: [1, 2, true, "hello"]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test"))
       XCTAssertTrue(json.contains("\"id\":11"))
       XCTAssertTrue(json.contains("\"params\":[1,2,true,\"hello\"]"))
     }
-
+    
     do {
       let request = Request(jsonrpc: "2.0", method: "test2", id: Id.string("customId"), params: Parameters.positional(array: [1, 2, true, ["hello", 3]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test2"))
       XCTAssertTrue(json.contains("\"id\":\"customId\""))
       XCTAssertTrue(json.contains("\"params\":[1,2,true,[\"hello\",3]]"))
     }
-
+    
     do {
       let request = Request(jsonrpc: "2.0", method: "test3", id: Id.number(0), params: Parameters.positional(array: [1, 2, true, ["subtrahend": 23, "minuend": 42]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test3"))
       XCTAssertTrue(json.contains("\"id\":0"))
@@ -261,17 +287,17 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"minuend\":42"))
       XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
-
+    
     do {
       let request = Request(jsonrpc: "2.0", method: "test3", id: Id.string("0"), params: Parameters.positional(array: [1, true, ["key1": "k1", "key2": 2, "key3": [0,3,["subKey1": true, "subKey2": 12]]]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"test3"))
       XCTAssertTrue(json.contains("\"id\":\"0\""))
@@ -283,38 +309,38 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"subKey1\":true"))
       
     }
-
+    
   }
-
+  
   func testEncodingNotificationWithoutParameters() throws {
     do {
       let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: nil)
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"123"))
       XCTAssertFalse(json.contains("id"))
       XCTAssertFalse(json.contains("params"))
     }
   }
-
+  
   func testEncodingNotificationWithNamedParameters() throws {
     do {
       let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"123"))
       XCTAssertFalse(json.contains("id"))
@@ -322,17 +348,17 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"minuend\":42"))
       XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
-
+    
     do {
       let request = Request(jsonrpc: "2.0", method: "123", id: nil,  params: Parameters.named(object: ["subtrahend": 23, "minuend": 42, "other":[1,2,3]]))
       let encoder = JSONEncoder()
       let jsonData = try encoder.encode(request)
-
+      
       guard let json = String(data: jsonData, encoding: .utf8) else {
         XCTFail("Failed while converting Data to String.")
         return
       }
-
+      
       XCTAssertTrue(json.contains("\"jsonrpc\":\"2.0"))
       XCTAssertTrue(json.contains("\"method\":\"123"))
       XCTAssertFalse(json.contains("id"))
@@ -342,5 +368,5 @@ class RequestTests: XCTestCase {
       XCTAssertTrue(json.contains("\"subtrahend\":23"))
     }
   }
-
+  
 }
