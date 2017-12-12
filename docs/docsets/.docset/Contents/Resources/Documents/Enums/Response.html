@@ -14,7 +14,7 @@
     <a title="Response Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html"> Docs</a> (80% documented)</p>
+        <p><a href="../index.html"> Docs</a> (84% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -67,7 +67,7 @@
 
                 </div>
               </div>
-            <p>When a rpc call is made, the Server MUST reply with a Response, except for in the case of Notifications.</p>
+            <p>When a rpc call is made, the Server must reply with a Response, except for in the case of Notifications.</p>
 
           </section>
           <section class="section task-group-section">
@@ -86,7 +86,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Success response.</p>
 
                       </div>
                       <div class="declaration">
@@ -117,7 +117,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Error response: when a rpc call encounters an error, the <code><a href="../Enums/ErrorObject.html">ErrorObject</a></code> must contain the error member with a value.</p>
 
                       </div>
                       <div class="declaration">
@@ -138,33 +138,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7JsonRPC8ResponseO7jsonrpcSSv"></a>
-                    <a name="//apple_ref/swift/Property/jsonrpc" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7JsonRPC8ResponseO7jsonrpcSSv">jsonrpc</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A String specifying the version of the JSON-RPC protocol. MUST be exactly <q>2.0</q>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">jsonrpc</span><span class="p">:</span> <span class="kt">String</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:7JsonRPC8ResponseO2idAA2IdOSgv"></a>
                     <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
                     <a class="token" href="#/s:7JsonRPC8ResponseO2idAA2IdOSgv">id</a>
@@ -175,10 +148,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>It MUST be the same as the value of the id member in the Request Object.</p>
+                        <p>It must be the same as the value of the id member in the Request Object.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    If there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it MUST be Null.
+    If there was an error in detecting the id in the Request object (e.g. Parse error/Invalid Request), it must be Null.
 
 </div>
 
@@ -207,8 +180,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This member is REQUIRED on success.
-This member MUST NOT exist if there was an error invoking the method.</p>
+                        <p>This member is <strong>required on success</strong>.
+This member must not exist if there was an error invoking the method.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     The value of this member is determined by the method invoked on the Server.
@@ -240,7 +213,7 @@ This member MUST NOT exist if there was an error invoking the method.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This member is REQUIRED on error.</p>
+                        <p>This member is <strong>required on error</strong>.</p>
 
                       </div>
                       <div class="declaration">
@@ -315,7 +288,7 @@ This member MUST NOT exist if there was an error invoking the method.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-12-10)</p>
+          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-12-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
