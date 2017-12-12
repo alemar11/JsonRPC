@@ -83,16 +83,15 @@ extension KeyedDecodingContainer {
         dictionary[key.stringValue] = intValue
       } else if let doubleValue = try? decode(Double.self, forKey: key) {
         dictionary[key.stringValue] = doubleValue
-      } else if (try? decodeNil(forKey: key)) != nil {
-        //dictionary[key.stringValue] = nil
-        continue
-      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self, forKey: key) {
+      } else if let nestedDictionary = try? decodeDictionary(Dictionary<String, Any>.self, forKey: key) {
         dictionary[key.stringValue] = nestedDictionary
-      } else if let nestedArray = try? decode(Array<Any>.self, forKey: key) {
+      } else if let nestedArray = try? decodeArray(Array<Any?>.self, forKey: key) {
         dictionary[key.stringValue] = nestedArray
       } else {
-        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation for \(key) is not yet supported.")
-        throw DecodingError.dataCorrupted(context)
+        //if nil or not yet supported, simply skip the key
+        //let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation for \(key) is not yet supported.")
+        //throw DecodingError.dataCorrupted(context)
+        continue
       }
     }
 
