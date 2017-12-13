@@ -35,7 +35,7 @@ extension ErrorData: Codable {
     if let value = try? container.decodeDictionary([String: Any].self, forKey: .data) {
       self = .structured(object: value)
 
-    } else if let value = try? container.decodeDynamicType(forKey: .data) {
+    } else if let value = try? container.decodeAny(forKey: .data) {
        self = .primitive(value: value)
 
     } else {

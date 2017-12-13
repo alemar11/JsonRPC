@@ -70,7 +70,7 @@ extension Response: Codable {
     }
     let id = try Id(from: decoder)
     let error = try? ErrorObject(from: decoder)
-    let result = try? container.decodeDynamicType(forKey: .result)
+    let result = try? container.decodeAny(forKey: .result)
 
     switch (result, error) {
     case (_?, _?):
