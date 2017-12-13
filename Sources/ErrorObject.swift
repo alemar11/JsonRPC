@@ -117,7 +117,7 @@ extension ErrorObject: Codable {
 
     switch code {
     case -32700:
-      self =  .parseError(message: message, data: errorData)
+      self = .parseError(message: message, data: errorData)
     case -32600:
       self = .invalidRequest(message: message, data: errorData)
     case -32601:

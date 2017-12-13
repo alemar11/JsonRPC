@@ -48,18 +48,18 @@ extension KeyedDecodingContainer {
   }
 
   /*
-  func decodeDictionaryIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
-    guard contains(key) else { return nil }
+   func decodeDictionaryIfPresent(_ type: Dictionary<String, Any>.Type, forKey key: K) throws -> Dictionary<String, Any>? {
+   guard contains(key) else { return nil }
 
-    return try decodeDictionary(type, forKey: key)
-  }
+   return try decodeDictionary(type, forKey: key)
+   }
 
-  func decodeArrayIfPresent(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?>? {
-    guard contains(key) else { return nil }
+   func decodeArrayIfPresent(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?>? {
+   guard contains(key) else { return nil }
 
-    return try decodeArray(type, forKey: key)
-  }
- */
+   return try decodeArray(type, forKey: key)
+   }
+   */
 
   func decodeArray(_ type: Array<Any?>.Type, forKey key: K) throws -> Array<Any?> {
     var container = try nestedUnkeyedContainer(forKey: key)
@@ -118,6 +118,27 @@ extension KeyedDecodingContainer {
 
 extension UnkeyedDecodingContainer {
 
+//  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
+//    var array: [Any] = []
+//    while isAtEnd == false {
+//      if let value = try? decode(Bool.self) {
+//        array.append(value)
+//      } else if let value = try? decode(Double.self) {
+//        array.append(value)
+//      } else if let value = try? decode(String.self) {
+//        array.append(value)
+//      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
+//        array.append(nestedDictionary)
+//      } else if let nestedArray = try? decode(Array<Any>.self) {
+//        array.append(nestedArray)
+//      } else {
+//        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation is not yet supported.")
+//        throw DecodingError.dataCorrupted(context)
+//      }
+//    }
+//    return array
+//  }
+
   mutating func decodeArray(_ type: Array<Any?>.Type) throws -> Array<Any?> {
     var array: [Any?] = []
 
@@ -130,17 +151,19 @@ extension UnkeyedDecodingContainer {
         array.append(value)
       } else if let value = try? decode(Double.self) {
         array.append(value)
+        //      } else if let nestedDictionary = try? decodeDictionary(Dictionary<String, Any>.self) {
+        //        array.append(nestedDictionary)
+        //      } else if let nestedArray = try? decodeArray(Array<Any?>.self) {
+        //        array.append(nestedArray)
       } else if let _ = try? decodeNil() {
+        // https://web.archive.org/web/20100718181845/http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#NullParameters
         array.append(nil)
-      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
-        array.append(nestedDictionary)
-      } else if let nestedArray = try? decode(Array<Any>.self) {
-        array.append(nestedArray)
       } else {
         let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation is not yet supported.")
         throw DecodingError.dataCorrupted(context)
       }
     }
+
     return array
   }
 
