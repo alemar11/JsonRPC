@@ -118,26 +118,26 @@ extension KeyedDecodingContainer {
 
 extension UnkeyedDecodingContainer {
 
-//  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
-//    var array: [Any] = []
-//    while isAtEnd == false {
-//      if let value = try? decode(Bool.self) {
-//        array.append(value)
-//      } else if let value = try? decode(Double.self) {
-//        array.append(value)
-//      } else if let value = try? decode(String.self) {
-//        array.append(value)
-//      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
-//        array.append(nestedDictionary)
-//      } else if let nestedArray = try? decode(Array<Any>.self) {
-//        array.append(nestedArray)
-//      } else {
-//        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation is not yet supported.")
-//        throw DecodingError.dataCorrupted(context)
-//      }
-//    }
-//    return array
-//  }
+  //  mutating func decode(_ type: Array<Any>.Type) throws -> Array<Any> {
+  //    var array: [Any] = []
+  //    while isAtEnd == false {
+  //      if let value = try? decode(Bool.self) {
+  //        array.append(value)
+  //      } else if let value = try? decode(Double.self) {
+  //        array.append(value)
+  //      } else if let value = try? decode(String.self) {
+  //        array.append(value)
+  //      } else if let nestedDictionary = try? decode(Dictionary<String, Any>.self) {
+  //        array.append(nestedDictionary)
+  //      } else if let nestedArray = try? decode(Array<Any>.self) {
+  //        array.append(nestedArray)
+  //      } else {
+  //        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "The decoding operation is not yet supported.")
+  //        throw DecodingError.dataCorrupted(context)
+  //      }
+  //    }
+  //    return array
+  //  }
 
   mutating func decodeArray(_ type: Array<Any?>.Type) throws -> Array<Any?> {
     var array: [Any?] = []
@@ -151,10 +151,6 @@ extension UnkeyedDecodingContainer {
         array.append(value)
       } else if let value = try? decode(Double.self) {
         array.append(value)
-        //      } else if let nestedDictionary = try? decodeDictionary(Dictionary<String, Any>.self) {
-        //        array.append(nestedDictionary)
-        //      } else if let nestedArray = try? decodeArray(Array<Any?>.self) {
-        //        array.append(nestedArray)
       } else if let _ = try? decodeNil() {
         // https://web.archive.org/web/20100718181845/http://json-rpc.org/wd/JSON-RPC-1-1-WD-20060807.html#NullParameters
         array.append(nil)
