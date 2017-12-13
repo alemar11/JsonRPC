@@ -33,12 +33,12 @@ extension Parameters: Codable {
   enum CodingKeys: String, CodingKey { case params }
 
   public init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    if let params = try? values.decodeArray(Array<Any?>.self, forKey: .params) {
+    if let params = try? container.decodeArray(Array<Any?>.self, forKey: .params) {
       self = .positional(array: params)
 
-    } else if let params = try? values.decodeDictionary([String: Any].self, forKey: .params) {
+    } else if let params = try? container.decodeDictionary([String: Any].self, forKey: .params) {
       self = .named(object: params)
 
     } else {

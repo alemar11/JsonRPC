@@ -59,7 +59,7 @@ class ResponseTests: XCTestCase {
 
   func testDecodingSuccessResponse() throws {
 
-    /// int result
+    /// Int result
     do {
       let json = """
           {"jsonrpc": "2.0", "result": 19, "id": 4}
@@ -78,7 +78,26 @@ class ResponseTests: XCTestCase {
       }
     }
 
-    /// string result
+    /// String result
+    do {
+      let json = """
+          {"jsonrpc": "2.0", "result": "response result", "id": "test"}
+      """.data(using: .utf8)!
+      let response = try JSONDecoder().decode(Response.self, from: json)
+      XCTAssertTrue(response.id == Id.string("test"))
+      XCTAssertTrue(response.result as! String == "response result")
+      XCTAssertNil(response.error)
+
+      switch response {
+      case .success(id: let id, result: let result):
+        XCTAssertTrue(id == Id.string("test"))
+        XCTAssertTrue(result as! String == "response result")
+      default:
+        XCTFail("Expected a success response.")
+      }
+    }
+
+    /// Double result
     do {
       let json = """
           {"jsonrpc": "2.0", "result": 19.19, "id": "test"}
@@ -131,19 +150,34 @@ class ResponseTests: XCTestCase {
     /// dictionary result
     do {
       let json = """
-          {"jsonrpc": "2.0", "result": {"key1": 2}, "id": 1}
+          {"jsonrpc": "2.0", "result": {"key1": 2, "key2": 1.1, "key3": [1, "a", true, null]}, "id": 1}
       """.data(using: .utf8)!
       let response = try JSONDecoder().decode(Response.self, from: json)
+
       XCTAssertTrue(response.id == Id.number(1))
-      XCTAssertTrue((response.result as! [String: Any]).count == 1)
+      XCTAssertTrue((response.result as! [String: Any]).count == 3)
       XCTAssertTrue((response.result as! [String: Any])["key1"] as! Int == 2)
+      XCTAssertTrue((response.result as! [String: Any])["key2"] as! Double == 1.1)
+      let arrayAssociatedWithKey3 = (response.result as! [String: Any])["key3"] as? [Any?]
+      XCTAssertNotNil(arrayAssociatedWithKey3)
+      XCTAssertTrue(arrayAssociatedWithKey3![0] as! Int == 1)
+      XCTAssertTrue(arrayAssociatedWithKey3![1] as! String == "a")
+      XCTAssertTrue(arrayAssociatedWithKey3![2] as! Bool == true)
+      XCTAssertNil(arrayAssociatedWithKey3![3])
       XCTAssertNil(response.error)
 
       switch response {
       case .success(id: let id, result: let result):
         XCTAssertTrue(id == Id.number(1))
-        XCTAssertTrue((result as! [String: Any]).count == 1)
+        XCTAssertTrue((result as! [String: Any]).count == 3)
         XCTAssertTrue((result as! [String: Any])["key1"] as! Int == 2)
+        XCTAssertTrue((result as! [String: Any])["key2"] as! Double == 1.1)
+        let arrayAssociatedWithKey3 = (result as! [String: Any])["key3"] as? [Any?]
+        XCTAssertNotNil(arrayAssociatedWithKey3)
+        XCTAssertTrue(arrayAssociatedWithKey3![0] as! Int == 1)
+        XCTAssertTrue(arrayAssociatedWithKey3![1] as! String == "a")
+        XCTAssertTrue(arrayAssociatedWithKey3![2] as! Bool == true)
+        XCTAssertNil(arrayAssociatedWithKey3![3])
       default:
         XCTFail("Expected a success response.")
       }

@@ -104,9 +104,9 @@ extension ErrorObject: Codable {
   enum CodingKeys: String, CodingKey { case error, code, message, data }
 
   public init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    let components = try values.decodeDictionary(Dictionary<String, Any>.self, forKey: .error)
+    let components = try container.decodeDictionary(Dictionary<String, Any>.self, forKey: .error)
     guard let codeValue = components[CodingKeys.code.rawValue], let code = codeValue as? Int else {
       let context =  DecodingError.Context(codingPath: [CodingKeys.code], debugDescription: "The key 'code' must be an Int.")
       throw DecodingError.dataCorrupted(context)
@@ -129,7 +129,7 @@ extension ErrorObject: Codable {
     case -32099 ... -32000:
       self = .raw(code: code, message: message, data: errorData)
     default:
-      throw DecodingError.dataCorruptedError(forKey: ErrorObject.CodingKeys.code, in: values, debugDescription: "The code \(code) is not allowed.")
+      throw DecodingError.dataCorruptedError(forKey: ErrorObject.CodingKeys.code, in: container, debugDescription: "The code \(code) is not allowed.")
     }
 
   }

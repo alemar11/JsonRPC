@@ -31,11 +31,11 @@ extension Id: Codable {
   enum CodingKeys: String, CodingKey { case id }
 
   public init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    if let id = try? values.decode(Int.self, forKey: .id) {
+    if let id = try? container.decode(Int.self, forKey: .id) {
       self = .number(id)
-    } else if let id = try? values.decode(String.self, forKey: .id) {
+    } else if let id = try? container.decode(String.self, forKey: .id) {
       self = .string(id)
     } else {
       let context =  DecodingError.Context(codingPath: [CodingKeys.id], debugDescription: "Key 'id' must be an Int or a String.")

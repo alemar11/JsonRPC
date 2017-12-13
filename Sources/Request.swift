@@ -52,13 +52,13 @@ extension Request: Codable {
   enum CodingKeys: String, CodingKey { case jsonrpc, id, method, params }
 
   public init(from decoder: Decoder) throws {
-    let values = try decoder.container(keyedBy: CodingKeys.self)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    guard let jsonrpc = try? values.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else {
+    guard let jsonrpc = try? container.decode(String.self, forKey: .jsonrpc), jsonrpc == "2.0" else {
       let context = DecodingError.Context(codingPath: [CodingKeys.jsonrpc], debugDescription: "JSON RPC version not supported.")
       throw DecodingError.dataCorrupted(context)
     }
-    guard let method = try? values.decode(String.self, forKey: .method), method != "" else {
+    guard let method = try? container.decode(String.self, forKey: .method), method != "" else {
       let context = DecodingError.Context(codingPath:  [CodingKeys.method], debugDescription: "The key 'method' cannot be nil or empty.")
       throw DecodingError.dataCorrupted(context)
     }
